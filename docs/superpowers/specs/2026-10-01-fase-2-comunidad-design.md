@@ -1,0 +1,94 @@
+# Neutro, fase 2: perfil, participación en eventos y convenios — Diseño
+
+Fecha: 2026-10-01
+Estado: construido. El usuario confirmó: foto de perfil (las fotos de eventos solo las suben los líderes), calificación y comentarios solo cuando el evento ya pasó, y asistencia con Voy / No voy. Lo marcado como **decisión por defecto** no lo ha confirmado.
+
+Amplía el diseño base: `2026-10-01-plataforma-neutro-design.md`. Sigue todo en local.
+
+## 1. Qué se añade
+
+1. **Foto de perfil.** Cada miembro aprobado sube su foto y edita su nombre y apodo en una página "Mi perfil". La foto aparece junto a su nombre en comentarios, asistentes y lista de miembros.
+   - Confirmado: es la foto de perfil; las fotos de los eventos solo las suben los líderes.
+2. **Confirmar participación.** En un evento próximo cada miembro marca "Voy" o "No voy" y puede cambiarlo hasta que el evento empiece. Todos los miembros ven quiénes van y el total.
+   - Confirmado: dos opciones, sin "tal vez". **Decisión por defecto:** la lista de quienes van la ven todos los miembros.
+3. **Calificación y comentarios.** Solo cuando el evento ya pasó. Calificación de 1 a 5 estrellas, una por miembro, modificable; se muestra el promedio. Comentarios libres, varios por miembro.
+   - Confirmado: ambos se habilitan únicamente cuando el evento ya pasó.
+   - **Decisión por defecto:** califica y comenta cualquier miembro aprobado, haya confirmado asistencia o no. Los comentarios no se editan: el autor o un líder pueden borrarlos.
+4. **Convenios con empresas.** Página de miembros con las empresas aliadas: nombre, logo, categoría, beneficio, descripción, teléfono, dirección, sitio web y vigencia. Los líderes los crean, editan, desactivan y borran.
+   - **Decisión por defecto:** los convenios solo los ven los miembros aprobados (no la portada pública). Un convenio inactivo o vencido deja de mostrarse a los miembros; los líderes lo siguen viendo.
+
+5. **Redes sociales.** Botones en la portada y en el pie de todas las páginas que llevan a los perfiles del grupo. Los enlaces se definen en `src/config/site.ts`.
+   - **Pendiente del usuario:** los enlaces reales; por ahora apuntan a la página principal de cada red.
+
+## 2. Fuera de alcance
+
+Respuestas anidadas y edición de comentarios, notificaciones, "tal vez" en asistencia, fotos de eventos subidas por miembros, códigos o cupones de convenios, convenios en la portada pública.
+
+## 3. Datos
+
+**`profiles`** — columna nueva `avatar_path` (nula). Debe empezar por el id del propio usuario.
+
+**`event_attendance`** — `event_id`, `profile_id` (clave compuesta), `status` (`going` | `not_going`), `updated_at`.
+
+**`event_ratings`** — `event_id`, `profile_id` (clave compuesta), `stars` (1 a 5), `updated_at`.
+
+**`event_comments`** — `id`, `event_id`, `author_id`, `body` (1 a 1000 caracteres), `created_at`.
+
+**`partners`** — `id`, `name`, `category`, `benefit`, `description`, `phone`, `address`, `website` (solo `http://` o `https://`), `logo_path`, `valid_until` (nula), `active`, `created_by`, `created_at`.
+
+Las filas de asistencia, calificación y comentarios se borran en cascada con el evento o con el miembro.
+
+### Permisos (RLS)
+
+| Tabla | Miembro aprobado | Líder | Anónimo / pendiente |
+|---|---|---|---|
+| `profiles.avatar_path` | Cambia la suya | Cambia la de cualquiera | Nada |
+| `event_attendance` | Lee todas; escribe la suya solo antes de que empiece el evento | Igual que miembro | Nada |
+| `event_ratings` | Lee todas; escribe la suya solo cuando el evento ya empezó | Igual que miembro | Nada |
+| `event_comments` | Lee todos; crea a su nombre solo cuando el evento ya empezó; borra los suyos | Además borra cualquiera | Nada |
+| `partners` | Lee los activos y vigentes | Lee y escribe todos | Nada |
+
+### Archivos
+
+- Bucket **`avatars`** (público por URL, nombres aleatorios): cada miembro aprobado escribe solo dentro de su carpeta `<su id>/`; los líderes pueden borrar cualquiera.
+- Bucket **`partners`** (público): logos; escriben los líderes.
+- Mismas reglas de fotos: solo imágenes, comprimidas en el navegador.
+
+## 4. Pantallas
+
+- **Mi perfil (`/perfil`)**: foto actual, subir o quitar foto, nombre y apodo. Se llega desde el nombre del usuario en la barra.
+- **Detalle de evento**:
+  - Próximo: bloque "¿Vas a ir?" con botones Voy / No voy, total y lista de quienes van.
+  - Realizado: lista de quienes confirmaron, promedio de estrellas con número de votos, selector para calificar y comentarios (del más antiguo al más reciente, con foto y nombre del autor) con caja para escribir.
+- **Listas**: las tarjetas de eventos realizados muestran el promedio; los próximos del calendario muestran cuántos van.
+- **Convenios (`/convenios`)**: tarjetas agrupadas por categoría.
+- **Panel de líderes → Convenios (`/lider/convenios`)**: lista con editar, activar/desactivar y borrar, y formulario.
+- **Panel de líderes → Miembros**: muestra la foto de cada miembro.
+
+## 5. Código
+
+```
+supabase/migrations/20261001010000_comunidad.sql
+src/components/Avatar.tsx
+src/features/profile/api.ts                 perfil propio y foto
+src/features/events/community.ts            asistencia, calificaciones, comentarios
+src/features/events/AttendanceSection.tsx, RatingSection.tsx, StarRating.tsx, CommentsSection.tsx
+src/features/partners/api.ts, PartnerCard.tsx, PartnerForm.tsx
+src/lib/url.ts                              validar enlaces http(s)
+src/pages/ProfilePage.tsx, PartnersPage.tsx, leader/LeaderPartnersPage.tsx
+```
+
+## 6. Pruebas
+
+- **Permisos:** casos nuevos en `tests/rls/` para cada fila de la tabla de arriba, incluidos: no se confirma asistencia a un evento pasado, no se califica ni se comenta un evento futuro, estrellas fuera de 1 a 5, comentar a nombre de otro, subir foto a la carpeta de otro, y un miembro no ve convenios inactivos o vencidos.
+- **Unitarias y de componentes:** `lib/url.ts`, `StarRating`, formulario de comentario y `PartnerForm`.
+- **Navegador:** subir foto de perfil, confirmar asistencia, calificar, comentar y borrar comentario, crear un convenio y verlo como miembro.
+
+## 7. Plan
+
+1. Pruebas de permisos nuevas (fallan) → migración → pasan → regenerar tipos.
+2. `lib/url.ts` y `StarRating` con sus pruebas.
+3. Perfil y `Avatar`.
+4. Asistencia, calificación y comentarios en el detalle de evento; resúmenes en listas.
+5. Convenios: página de miembros y gestión de líderes.
+6. Datos de ejemplo, verificación en navegador, README.

@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom'
 import { Button, EmptyState, ErrorNote, PageTitle, Spinner } from '../components/ui'
 import { MonthGrid } from '../features/calendar/MonthGrid'
 import { useEvents } from '../features/events/api'
+import { useGoingCounts } from '../features/events/community'
 import { formatEventDate, formatMonth, isPast, monthStart } from '../lib/dates'
 
 export function CalendarPage() {
   const events = useEvents()
+  const going = useGoingCounts()
   const [today] = useState(() => new Date())
   const [cursor, setCursor] = useState({ year: today.getFullYear(), monthIndex: today.getMonth() })
 
@@ -60,6 +62,12 @@ export function CalendarPage() {
                       <span className="text-sm text-steel first-letter:uppercase">
                         {formatEventDate(e.starts_at)}
                         {e.location && <span className="text-muted"> · {e.location}</span>}
+                        {!!going.data?.[e.id] && (
+                          <span className="text-cream">
+                            {' '}
+                            · {going.data[e.id] === 1 ? '1 va' : `${going.data[e.id]} van`}
+                          </span>
+                        )}
                       </span>
                     </Link>
                   </li>

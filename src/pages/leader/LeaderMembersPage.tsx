@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../../auth/AuthProvider'
+import { Avatar } from '../../components/Avatar'
 import { Badge, Button, Card, EmptyState, ErrorNote, Spinner } from '../../components/ui'
 import { useMembers, useSetMemberRole, useSetMemberStatus } from '../../features/members/api'
 import { formatDayOf } from '../../lib/dates'
@@ -8,12 +9,15 @@ import type { Profile } from '../../lib/supabase'
 
 function MemberName({ member }: { member: Profile }) {
   return (
-    <div>
+    <div className="flex items-center gap-3">
+      <Avatar profile={member} />
+      <div>
       <p className="font-semibold">
         {member.full_name}
         {member.nickname && <span className="text-steel"> «{member.nickname}»</span>}
       </p>
       <p className="text-sm text-muted">Se registró el {formatDayOf(member.created_at)}</p>
+      </div>
     </div>
   )
 }

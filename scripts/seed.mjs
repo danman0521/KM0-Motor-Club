@@ -153,6 +153,91 @@ for (const suggestion of SUGGESTIONS) {
   if (!found) check(await admin.from('suggestions').insert(suggestion), `crear sugerencia ${suggestion.title}`)
 }
 
+// --- Asistencia, calificaciones y comentarios ---------------------------------
+const mecanica = eventIds['Jornada de mecánica básica']
+const letras = eventIds['Rodada al Alto de Letras']
+const nocturna = eventIds['Rodada nocturna por la ciudad']
+
+check(
+  await admin.from('event_attendance').upsert(
+    [
+      { event_id: nocturna, profile_id: leader, status: 'going' },
+      { event_id: nocturna, profile_id: andrea, status: 'going' },
+      { event_id: nocturna, profile_id: julian, status: 'not_going' },
+      { event_id: mecanica, profile_id: andrea, status: 'going' },
+      { event_id: mecanica, profile_id: julian, status: 'going' },
+    ],
+    { ignoreDuplicates: true },
+  ),
+  'asistencia',
+)
+
+check(
+  await admin.from('event_ratings').upsert(
+    [
+      { event_id: letras, profile_id: andrea, stars: 5 },
+      { event_id: letras, profile_id: julian, stars: 4 },
+      { event_id: mecanica, profile_id: andrea, stars: 5 },
+    ],
+    { ignoreDuplicates: true },
+  ),
+  'calificaciones',
+)
+
+const COMMENTS = [
+  { event_id: letras, author_id: andrea, body: 'La subida con neblina fue de otro nivel. ¡Hay que repetirla!' },
+  { event_id: letras, author_id: julian, body: 'Buen ritmo de grupo. Para la próxima, salir media hora antes.' },
+  { event_id: mecanica, author_id: andrea, body: 'Gracias a Julián por prestar el taller.' },
+]
+for (const comment of COMMENTS) {
+  const found = check(
+    await admin.from('event_comments').select('id').eq('event_id', comment.event_id).eq('body', comment.body).maybeSingle(),
+    'buscar comentario',
+  )
+  if (!found) check(await admin.from('event_comments').insert(comment), 'crear comentario')
+}
+
+// --- Convenios -----------------------------------------------------------------
+const PARTNERS = [
+  {
+    name: 'Taller El Piñón',
+    category: 'Talleres',
+    benefit: '15 % de descuento en mano de obra',
+    description: 'Presenta tu nombre como miembro de Neutro al pedir la cita. No aplica en repuestos.',
+    phone: '300 555 0101',
+    address: 'Calle 10 # 20-30',
+    website: 'https://example.com/taller-el-pinon',
+    valid_until: null,
+    active: true,
+  },
+  {
+    name: 'Llantas La Curva',
+    category: 'Repuestos',
+    benefit: 'Montaje y balanceo gratis por la compra de dos llantas',
+    description: '',
+    phone: '300 555 0102',
+    address: 'Avenida 5 # 12-08',
+    website: null,
+    valid_until: null,
+    active: true,
+  },
+  {
+    name: 'Parrilla El Mirador',
+    category: 'Comida',
+    benefit: '10 % en la cuenta los días de rodada',
+    description: 'Válido para grupos de cuatro o más motos.',
+    phone: '',
+    address: 'Km 12 vía al mirador',
+    website: null,
+    valid_until: null,
+    active: true,
+  },
+]
+for (const partner of PARTNERS) {
+  const found = check(await admin.from('partners').select('id').eq('name', partner.name).maybeSingle(), `buscar ${partner.name}`)
+  if (!found) check(await admin.from('partners').insert({ ...partner, created_by: leader }), `crear ${partner.name}`)
+}
+
 console.log('Datos de ejemplo listos.')
 console.log('Cuentas de prueba (la contraseña está en scripts/seed.mjs):')
 for (const a of ACCOUNTS) console.log(`  ${a.email}  →  ${a.role === 'leader' ? 'líder' : a.status === 'pending' ? 'pendiente' : 'miembro'}`)

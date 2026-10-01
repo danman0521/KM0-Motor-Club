@@ -23,7 +23,57 @@ export type Database = {
           }
         },"public": {
           Tables: {
-            "event_photos": {
+            "event_attendance": {
+                  Row: {
+                    "event_id": string,"profile_id": string,"status": Database["public"]['Enums']["attendance_status"],"updated_at": string
+                  }
+                  Insert: {
+                    "event_id": string,"profile_id"?: string,"status": Database["public"]['Enums']["attendance_status"],"updated_at"?: string
+                  }
+                  Update: {
+                    "event_id"?: string,"profile_id"?: string,"status"?: Database["public"]['Enums']["attendance_status"],"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "event_attendance_event_id_fkey"
+      columns: ["event_id"]
+isOneToOne: false
+      referencedRelation: "events"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "event_attendance_profile_id_fkey"
+      columns: ["profile_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"event_comments": {
+                  Row: {
+                    "author_id": string,"body": string,"created_at": string,"event_id": string,"id": string
+                  }
+                  Insert: {
+                    "author_id"?: string,"body": string,"created_at"?: string,"event_id": string,"id"?: string
+                  }
+                  Update: {
+                    "author_id"?: string,"body"?: string,"created_at"?: string,"event_id"?: string,"id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "event_comments_author_id_fkey"
+      columns: ["author_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "event_comments_event_id_fkey"
+      columns: ["event_id"]
+isOneToOne: false
+      referencedRelation: "events"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"event_photos": {
                   Row: {
                     "created_at": string,"event_id": string,"id": string,"storage_path": string,"uploaded_by": string | null
                   }
@@ -43,6 +93,31 @@ isOneToOne: false
     },{
       foreignKeyName: "event_photos_uploaded_by_fkey"
       columns: ["uploaded_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"event_ratings": {
+                  Row: {
+                    "event_id": string,"profile_id": string,"stars": number,"updated_at": string
+                  }
+                  Insert: {
+                    "event_id": string,"profile_id"?: string,"stars": number,"updated_at"?: string
+                  }
+                  Update: {
+                    "event_id"?: string,"profile_id"?: string,"stars"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "event_ratings_event_id_fkey"
+      columns: ["event_id"]
+isOneToOne: false
+      referencedRelation: "events"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "event_ratings_profile_id_fkey"
+      columns: ["profile_id"]
 isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
@@ -111,15 +186,34 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
-                },"profiles": {
+                },"partners": {
                   Row: {
-                    "created_at": string,"full_name": string,"id": string,"nickname": string | null,"role": Database["public"]['Enums']["member_role"],"status": Database["public"]['Enums']["member_status"]
+                    "active": boolean,"address": string,"benefit": string,"category": string,"created_at": string,"created_by": string | null,"description": string,"id": string,"logo_path": string | null,"name": string,"phone": string,"valid_until": string | null,"website": string | null
                   }
                   Insert: {
-                    "created_at"?: string,"full_name": string,"id": string,"nickname"?: string | null,"role"?: Database["public"]['Enums']["member_role"],"status"?: Database["public"]['Enums']["member_status"]
+                    "active"?: boolean,"address"?: string,"benefit": string,"category"?: string,"created_at"?: string,"created_by"?: string | null,"description"?: string,"id"?: string,"logo_path"?: string | null,"name": string,"phone"?: string,"valid_until"?: string | null,"website"?: string | null
                   }
                   Update: {
-                    "created_at"?: string,"full_name"?: string,"id"?: string,"nickname"?: string | null,"role"?: Database["public"]['Enums']["member_role"],"status"?: Database["public"]['Enums']["member_status"]
+                    "active"?: boolean,"address"?: string,"benefit"?: string,"category"?: string,"created_at"?: string,"created_by"?: string | null,"description"?: string,"id"?: string,"logo_path"?: string | null,"name"?: string,"phone"?: string,"valid_until"?: string | null,"website"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "partners_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"profiles": {
+                  Row: {
+                    "avatar_path": string | null,"created_at": string,"full_name": string,"id": string,"nickname": string | null,"role": Database["public"]['Enums']["member_role"],"status": Database["public"]['Enums']["member_status"]
+                  }
+                  Insert: {
+                    "avatar_path"?: string | null,"created_at"?: string,"full_name": string,"id": string,"nickname"?: string | null,"role"?: Database["public"]['Enums']["member_role"],"status"?: Database["public"]['Enums']["member_status"]
+                  }
+                  Update: {
+                    "avatar_path"?: string | null,"created_at"?: string,"full_name"?: string,"id"?: string,"nickname"?: string | null,"role"?: Database["public"]['Enums']["member_role"],"status"?: Database["public"]['Enums']["member_status"]
                   }
                   Relationships: [
                     
@@ -158,6 +252,9 @@ isOneToOne: false
             "create_event_from_suggestion":
 { Args: { "p_description": string,"p_location": string,"p_starts_at": string,"p_suggestion": string,"p_title": string }; Returns: string
                            },
+"event_has_started":
+{ Args: { "p_event": string }; Returns: boolean
+                           },
 "is_approved":
 { Args: Record<PropertyKey, never>; Returns: boolean
                            },
@@ -176,7 +273,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "member_role": "member"|"leader","member_status": "pending"|"approved"|"rejected","suggestion_status": "pending"|"approved"|"rejected"
+            "attendance_status": "going"|"not_going","member_role": "member"|"leader","member_status": "pending"|"approved"|"rejected","suggestion_status": "pending"|"approved"|"rejected"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -296,7 +393,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "member_role": ["member", "leader"],"member_status": ["pending", "approved", "rejected"],"suggestion_status": ["pending", "approved", "rejected"]
+            "attendance_status": ["going", "not_going"],"member_role": ["member", "leader"],"member_status": ["pending", "approved", "rejected"],"suggestion_status": ["pending", "approved", "rejected"]
           }
         }
 } as const

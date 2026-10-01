@@ -6,6 +6,7 @@ const tabs = [
   { to: 'eventos', label: 'Eventos' },
   { to: 'destacado', label: 'Destacado' },
   { to: 'sugerencias', label: 'Sugerencias' },
+  { to: 'convenios', label: 'Convenios' },
 ]
 
 export function LeaderLayout() {

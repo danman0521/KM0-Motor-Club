@@ -1,6 +1,6 @@
 # Neutro
 
-Plataforma web del grupo de moteros Neutro: portada pública, zona de miembros (eventos, calendario, motero destacado, sugerencias) y panel de líderes.
+Plataforma web del grupo de moteros Neutro: portada pública, zona de miembros (eventos con asistencia, calificación y comentarios; calendario; motero destacado; sugerencias; convenios; perfil con foto) y panel de líderes.
 
 Por ahora todo corre en local. Nada se despliega ni usa servicios en la nube.
 
@@ -63,12 +63,26 @@ Para apagar Supabase: `npm run db:stop` (los datos se conservan).
 
 Supabase Studio (para ver las tablas) queda en <http://127.0.0.1:54323>.
 
+## Redes sociales
+
+Los botones de la portada y del pie de página salen de la lista `social` en [src/config/site.ts](src/config/site.ts). Los enlaces actuales son de ejemplo: cámbialos por los perfiles reales del grupo. Para quitar un botón, borra su línea.
+
+## Base de datos
+
+Si llega una migración nueva en `supabase/migrations/`, aplícala sin borrar los datos con:
+
+```bash
+npx supabase migration up
+```
+
+`npm run db:reset` también la aplica, pero borra todos los datos.
+
 ## Cómo está organizado
 
 - `src/pages/` — una página por ruta.
-- `src/features/` — eventos, calendario, destacado, sugerencias y miembros; cada una con sus consultas (`api.ts`) y componentes.
+- `src/features/` — eventos (con asistencia, calificaciones y comentarios), calendario, destacado, sugerencias, convenios, perfil y miembros; cada una con sus consultas y componentes.
 - `src/auth/` — sesión, perfil y protección de rutas.
-- `src/config/site.ts` — nombre del grupo, lema y texto de la portada.
+- `src/config/site.ts` — nombre del grupo, lema, texto de la portada y redes sociales.
 - `src/index.css` — colores del tema, tomados del logo.
 - `supabase/migrations/` — tablas, permisos por rol (RLS) y almacenamiento de fotos.
 
@@ -78,3 +92,4 @@ Los permisos se aplican en la base de datos, no solo en la interfaz. `npm run te
 
 - Diseño: [docs/superpowers/specs/2026-10-01-plataforma-neutro-design.md](docs/superpowers/specs/2026-10-01-plataforma-neutro-design.md)
 - Plan: [docs/superpowers/plans/2026-10-01-plataforma-neutro.md](docs/superpowers/plans/2026-10-01-plataforma-neutro.md)
+- Fase 2 (perfil, participación y convenios): [docs/superpowers/specs/2026-10-01-fase-2-comunidad-design.md](docs/superpowers/specs/2026-10-01-fase-2-comunidad-design.md)

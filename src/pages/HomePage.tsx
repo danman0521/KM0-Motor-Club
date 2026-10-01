@@ -1,4 +1,5 @@
 import { useAuth } from '../auth/AuthProvider'
+import { SocialLinks } from '../components/SocialLinks'
 import { ButtonLink, Card, EmptyState, ErrorNote, Spinner } from '../components/ui'
 import { site } from '../config/site'
 import { FeaturedCard } from '../features/featured/FeaturedCard'
@@ -30,6 +31,10 @@ export function HomePage() {
                 </ButtonLink>
               </>
             )}
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-3 md:justify-start">
+            <span className="text-sm text-muted">Síguenos:</span>
+            <SocialLinks />
           </div>
         </div>
       </section>

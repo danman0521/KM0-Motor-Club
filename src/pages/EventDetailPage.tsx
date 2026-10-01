@@ -1,7 +1,10 @@
 import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
 import { Badge, ButtonLink, EmptyState, ErrorNote, Spinner } from '../components/ui'
+import { AttendanceSection } from '../features/events/AttendanceSection'
+import { CommentsSection } from '../features/events/CommentsSection'
 import { PhotoGallery } from '../features/events/PhotoGallery'
+import { RatingSection } from '../features/events/RatingSection'
 import { useEvent, useEventPhotos, useEventVideos } from '../features/events/api'
 import { formatEventDate, isPast } from '../lib/dates'
 import { youTubeEmbedUrl } from '../lib/youtube'
@@ -43,12 +46,16 @@ export function EventDetailPage() {
 
       {e.description && <p className="whitespace-pre-line text-lg text-steel">{e.description}</p>}
 
+      {!past && <AttendanceSection eventId={e.id} past={false} />}
+
       {e.chronicle && (
         <section>
           <h2 className="mb-3 text-2xl font-bold">Crónica</h2>
           <p className="whitespace-pre-line leading-relaxed">{e.chronicle}</p>
         </section>
       )}
+
+      {past && <RatingSection eventId={e.id} />}
 
       <section>
         <h2 className="mb-3 text-2xl font-bold">Fotos</h2>
@@ -79,6 +86,10 @@ export function EventDetailPage() {
           </div>
         </section>
       )}
+
+      {/* Calificación y comentarios solo cuando el evento ya pasó */}
+      {past && <AttendanceSection eventId={e.id} past />}
+      {past && <CommentsSection eventId={e.id} />}
     </article>
   )
 }

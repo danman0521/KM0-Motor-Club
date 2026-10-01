@@ -3,12 +3,14 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
 import { site } from '../config/site'
 import { displayName } from '../lib/supabase'
+import { Avatar } from './Avatar'
 
 const memberLinks = [
   { to: '/eventos', label: 'Eventos' },
   { to: '/calendario', label: 'Calendario' },
   { to: '/destacado', label: 'Destacado' },
   { to: '/sugerencias', label: 'Sugerencias' },
+  { to: '/convenios', label: 'Convenios' },
 ]
 
 export function NavBar() {
@@ -39,7 +41,19 @@ export function NavBar() {
 
   const account = session ? (
     <>
-      <span className="px-3 py-2 text-sm text-muted">{displayName(profile)}</span>
+      {isApproved ? (
+        <Link
+          to="/perfil"
+          onClick={() => setOpen(false)}
+          title="Mi perfil"
+          className="flex items-center gap-2 rounded-md px-2 py-1 text-sm text-steel hover:bg-surface-2 hover:text-ink"
+        >
+          <Avatar profile={profile} size="sm" />
+          {displayName(profile)}
+        </Link>
+      ) : (
+        <span className="px-3 py-2 text-sm text-muted">{displayName(profile)}</span>
+      )}
       <button
         type="button"
         onClick={handleSignOut}
@@ -67,7 +81,7 @@ export function NavBar() {
           <span className="font-display text-2xl font-bold uppercase tracking-wider text-red-hover">{site.name}</span>
         </Link>
 
-        <nav aria-label="Principal" className="hidden items-center gap-1 md:flex">
+        <nav aria-label="Principal" className="hidden items-center gap-1 lg:flex">
           {links.map((l) => (
             <NavLink key={l.to} to={l.to} className={linkClass}>
               {l.label}
@@ -79,7 +93,7 @@ export function NavBar() {
 
         <button
           type="button"
-          className="rounded-md border border-line px-3 py-2 md:hidden"
+          className="rounded-md border border-line px-3 py-2 lg:hidden"
           aria-label="Menú"
           aria-expanded={open}
           onClick={() => setOpen(!open)}
@@ -91,7 +105,7 @@ export function NavBar() {
       </div>
 
       {open && (
-        <nav aria-label="Principal móvil" className="flex flex-col gap-1 border-t border-surface-2 px-4 py-3 md:hidden">
+        <nav aria-label="Principal móvil" className="flex flex-col gap-1 border-t border-surface-2 px-4 py-3 lg:hidden">
           {links.map((l) => (
             <NavLink key={l.to} to={l.to} className={linkClass} onClick={() => setOpen(false)}>
               {l.label}

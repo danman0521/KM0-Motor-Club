@@ -2,9 +2,18 @@ import { Link } from 'react-router-dom'
 import { site } from '../../config/site'
 import { formatEventDate } from '../../lib/dates'
 import type { EventRow } from '../../lib/supabase'
+import { RatingSummary } from './StarRating'
 
 /** Tarjeta de evento con portada; `coverUrl` es la URL firmada de la portada, si hay. */
-export function EventCard({ event, coverUrl }: { event: EventRow; coverUrl?: string }) {
+export function EventCard({
+  event,
+  coverUrl,
+  rating,
+}: {
+  event: EventRow
+  coverUrl?: string
+  rating?: { average: number; count: number }
+}) {
   return (
     <Link
       to={`/eventos/${event.id}`}
@@ -21,6 +30,7 @@ export function EventCard({ event, coverUrl }: { event: EventRow; coverUrl?: str
         <h2 className="text-xl font-bold group-hover:text-red-hover">{event.title}</h2>
         <p className="text-sm text-steel first-letter:uppercase">{formatEventDate(event.starts_at)}</p>
         {event.location && <p className="text-sm text-muted">{event.location}</p>}
+        {rating && <RatingSummary average={rating.average} count={rating.count} />}
       </div>
     </Link>
   )
