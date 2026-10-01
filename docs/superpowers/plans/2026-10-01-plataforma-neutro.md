@@ -56,13 +56,13 @@ src/**/*.test.ts(x)                              unitarias y de componentes
 
 **Produces:** scripts `dev`, `build`, `test`, `test:rls`, `db:start`, `db:stop`, `db:reset`, `db:seed`, `db:types`; tokens Tailwind `bg`, `surface`, `surface-2`, `line`, `muted`, `ink`, `red`, `red-hover`, `red-dark`, `navy`, `navy-dark`, `steel`, `cream`; fuentes `font-display` (Oswald) y `font-sans` (Inter).
 
-- [ ] `npm create vite@latest` (plantilla react-ts) en la raíz; instalar dependencias de runtime y de desarrollo.
-- [ ] Configurar Tailwind 4 (`@tailwindcss/vite`) y declarar los tokens en `@theme` dentro de `src/index.css`.
-- [ ] Copiar el logo a `public/` y generar `favicon.png`.
-- [ ] `npx supabase init`; en `config.toml`: `site_url = "http://localhost:5173"`, confirmación de correo desactivada.
-- [ ] `db:start` = `supabase start -x realtime,edge-runtime,logflare,vector,imgproxy,supavisor`.
-- [ ] Verificar: `npm run build` compila y `npm run db:start` deja Supabase arriba.
-- [ ] Commit.
+- [x] `npm create vite@latest` (plantilla react-ts) en la raíz; instalar dependencias de runtime y de desarrollo.
+- [x] Configurar Tailwind 4 (`@tailwindcss/vite`) y declarar los tokens en `@theme` dentro de `src/index.css`.
+- [x] Copiar el logo a `public/` y generar `favicon.png`.
+- [x] `npx supabase init`; en `config.toml`: `site_url = "http://localhost:5173"`, confirmación de correo desactivada.
+- [x] `db:start` = `supabase start -x realtime,edge-runtime,logflare,vector,imgproxy,supavisor`.
+- [x] Verificar: `npm run build` compila y `npm run db:start` deja Supabase arriba.
+- [x] Commit.
 
 ### Task 2: Esquema, RLS, funciones y buckets
 
@@ -78,15 +78,15 @@ src/**/*.test.ts(x)                              unitarias y de componentes
 - RPC `create_event_from_suggestion(p_suggestion uuid, p_title text, p_description text, p_location text, p_starts_at timestamptz) returns uuid` → crea el evento y marca la sugerencia `approved` con `event_id`, en una transacción; solo líderes.
 - Buckets `event-photos` (privado) y `featured` (público), 5 MB, solo imágenes, con políticas en `storage.objects`.
 
-- [ ] Escribir `tests/rls/rls.test.ts` (falla: no hay esquema). Casos:
+- [x] Escribir `tests/rls/rls.test.ts` (falla: no hay esquema). Casos:
   - anónimo: no lee `events`, `profiles`, `suggestions`, `featured_riders`; sí obtiene `public_upcoming_events` (máx. 3, solo futuros) y `public_current_featured`.
   - pendiente: lee solo su perfil; no lee eventos; no puede postular; no puede aprobarse ni hacerse líder.
   - miembro: lee eventos, fotos, videos, destacados, sugerencias y perfiles aprobados (no los pendientes); crea sugerencia propia `pending`; no puede crearla ya aprobada ni a nombre de otro; no escribe eventos; no puede hacerse líder; no cambia el estado de una sugerencia; no sube fotos; sí obtiene URL firmada de una foto.
   - líder: CRUD de eventos, fotos, videos, destacado; aprueba miembros; nombra líder; no puede degradarse a sí mismo; `create_event_from_suggestion` crea evento y enlaza; sube y borra fotos.
   - miembro llama `create_event_from_suggestion` → error.
-- [ ] Escribir la migración; `npm run db:reset`; `npm run test:rls` en verde.
-- [ ] `npm run db:types` genera `src/lib/database.types.ts`.
-- [ ] Commit.
+- [x] Escribir la migración; `npm run db:reset`; `npm run test:rls` en verde.
+- [x] `npm run db:types` genera `src/lib/database.types.ts`.
+- [x] Commit.
 
 ### Task 3: Utilidades puras (TDD)
 
@@ -99,7 +99,7 @@ src/**/*.test.ts(x)                              unitarias y de componentes
 - `isPast(startsAt: string, now?: Date): boolean`, `isSameDay(a: Date, b: Date): boolean`, `monthStart(d: Date): string` (`YYYY-MM-01`), `formatEventDate(iso: string): string`, `formatMonth(isoDate: string): string`, `toLocalInputValue(iso: string): string`.
 - `resolveAccess(state: { hasSession: boolean; profile: Pick<Profile,'role'|'status'> | null }, need: 'approved' | 'leader'): 'ok' | '/ingresar' | '/pendiente' | '/eventos'`.
 
-- [ ] Tests primero, verlos fallar, implementar, verlos pasar. Commit.
+- [x] Tests primero, verlos fallar, implementar, verlos pasar. Commit.
 
 ### Task 4: Autenticación y armazón
 
@@ -113,15 +113,15 @@ src/**/*.test.ts(x)                              unitarias y de componentes
 - `ui.tsx`: `Button`, `Card`, `Field`, `Badge`, `Spinner`, `ErrorNote`, `EmptyState`, `Modal`.
 - `NavBar` con entradas según rol y menú desplegable en celular.
 
-- [ ] Implementar; test de componente de `RegisterPage` (validación de campos obligatorios).
-- [ ] Verificar en navegador: registrar cuenta → cae en `/pendiente`. Commit.
+- [x] Implementar; test de componente de `RegisterPage` (validación de campos obligatorios).
+- [x] Verificar en navegador: registrar cuenta → cae en `/pendiente`. Commit.
 
 ### Task 5: Seed
 
 **Files:** `scripts/seed.mjs`
 
-- [ ] Con la clave de servicio local: un líder, dos miembros aprobados, uno pendiente, dos eventos pasados (con crónica y video), dos futuros, destacado del mes actual y del anterior, tres sugerencias (una por estado). Idempotente (no duplica si ya existe).
-- [ ] `npm run db:seed`; ingresar como líder en el navegador. Commit.
+- [x] Con la clave de servicio local: un líder, dos miembros aprobados, uno pendiente, dos eventos pasados (con crónica y video), dos futuros, destacado del mes actual y del anterior, tres sugerencias (una por estado). Idempotente (no duplica si ya existe).
+- [x] `npm run db:seed`; ingresar como líder en el navegador. Commit.
 
 ### Task 6: Eventos y calendario (zona de miembros)
 
@@ -129,8 +129,8 @@ src/**/*.test.ts(x)                              unitarias y de componentes
 
 **Produces (`events/api.ts`):** `useEvents()`, `useEvent(id)`, `useEventPhotos(eventId)` (con URL firmadas), `useEventVideos(eventId)`, `useSignedCovers(paths)`, y mutaciones `useSaveEvent()`, `useDeleteEvent()`, `useUploadPhotos()`, `useDeletePhoto()`, `useSetCover()`, `useAddVideo()`, `useDeleteVideo()`.
 
-- [ ] Lista de eventos pasados (más reciente primero), detalle con crónica, galería con visor y videos; calendario mensual con navegación y lista de próximos.
-- [ ] Verificar en navegador como miembro. Commit.
+- [x] Lista de eventos pasados (más reciente primero), detalle con crónica, galería con visor y videos; calendario mensual con navegación y lista de próximos.
+- [x] Verificar en navegador como miembro. Commit.
 
 ### Task 7: Destacado y sugerencias (zona de miembros) + portada
 
@@ -138,8 +138,8 @@ src/**/*.test.ts(x)                              unitarias y de componentes
 
 **Produces:** `useFeaturedRiders()`, `useSaveFeatured()`, `usePublicHome()` (las dos RPC públicas), `useSuggestions()`, `useCreateSuggestion()`, `useRejectSuggestion()`, `useApproveSuggestionAsEvent()`.
 
-- [ ] Test de componente de `SuggestionForm` (título obligatorio; envía datos correctos; conserva lo escrito si falla).
-- [ ] Implementar páginas; verificar portada sin sesión y zona privada como miembro. Commit.
+- [x] Test de componente de `SuggestionForm` (título obligatorio; envía datos correctos; conserva lo escrito si falla).
+- [x] Implementar páginas; verificar portada sin sesión y zona privada como miembro. Commit.
 
 ### Task 8: Panel de líderes
 
@@ -147,15 +147,15 @@ src/**/*.test.ts(x)                              unitarias y de componentes
 
 **Produces:** `useMembers()`, `useSetMemberStatus()`, `useSetMemberRole()`; `compressPhoto(file: File): Promise<File>`, `isImageFile(file: File): boolean`.
 
-- [ ] Miembros: pendientes con Aprobar/Rechazar; lista con nombrar/quitar líder y revocar.
-- [ ] Eventos: crear/editar/borrar; subida múltiple con progreso por foto (si una falla, las demás siguen); portada; videos por enlace.
-- [ ] Destacado: mes, miembro, motivo, foto; uno por mes, editable.
-- [ ] Sugerencias: rechazar con nota; aprobar abre `/lider/eventos/nuevo?sugerencia=<id>` precargado y usa `create_event_from_suggestion`.
-- [ ] Test de componente de `EventForm` (campos obligatorios; precarga desde sugerencia).
-- [ ] Commit.
+- [x] Miembros: pendientes con Aprobar/Rechazar; lista con nombrar/quitar líder y revocar.
+- [x] Eventos: crear/editar/borrar; subida múltiple con progreso por foto (si una falla, las demás siguen); portada; videos por enlace.
+- [x] Destacado: mes, miembro, motivo, foto; uno por mes, editable.
+- [x] Sugerencias: rechazar con nota; aprobar abre `/lider/eventos/nuevo?sugerencia=<id>` precargado y usa `create_event_from_suggestion`.
+- [x] Test de componente de `EventForm` (campos obligatorios; precarga desde sugerencia).
+- [x] Commit.
 
 ### Task 9: Verificación de punta a punta y README
 
-- [ ] Recorrido en navegador: registro → aprobación por líder → ver eventos → postular → aprobar → aparece en calendario y portada; subida de foto; vista en ancho de celular.
-- [ ] `npm run test`, `npm run test:rls`, `npm run build` en verde.
-- [ ] `README.md` con cómo ejecutar en local. Commit.
+- [x] Recorrido en navegador: registro → aprobación por líder → ver eventos → postular → aprobar → aparece en calendario y portada; subida de foto; vista en ancho de celular.
+- [x] `npm run test`, `npm run test:rls`, `npm run build` en verde.
+- [x] `README.md` con cómo ejecutar en local. Commit.

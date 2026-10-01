@@ -1,7 +1,7 @@
 # Plataforma web del grupo de moteros Neutro — Diseño
 
 Fecha: 2026-10-01
-Estado: pendiente de revisión del usuario
+Estado: aprobado
 
 ## 1. Objetivo
 

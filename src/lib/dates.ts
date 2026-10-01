@@ -52,6 +52,11 @@ export function formatEventDate(iso: string): string {
   return eventFormat.format(new Date(iso))
 }
 
+/** Día (sin hora) de un instante, en hora local. */
+export function formatDayOf(iso: string): string {
+  return dayFormat.format(new Date(iso))
+}
+
 /** Formatea una fecha sin hora (`YYYY-MM-DD`) sin desplazarla por zona horaria. */
 export function formatDay(isoDate: string): string {
   const [y, m, d] = isoDate.split('-').map(Number)

@@ -1,0 +1,91 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { compressPhoto } from '../../lib/images'
+import { supabase } from '../../lib/supabase'
+
+const BUCKET = 'featured'
+
+export function featuredPhotoUrl(path: string | null | undefined): string | undefined {
+  if (!path) return undefined
+  return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl
+}
+
+export function useFeaturedRiders() {
+  return useQuery({
+    queryKey: ['featured'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('featured_riders')
+        .select('*, profile:profiles!featured_riders_profile_id_fkey(id, full_name, nickname)')
+        .order('month', { ascending: false })
+      if (error) throw error
+      return data
+    },
+  })
+}
+
+export type FeaturedWithProfile = NonNullable<ReturnType<typeof useFeaturedRiders>['data']>[number]
+
+export type FeaturedInput = {
+  /** Primer día del mes, `YYYY-MM-01` */
+  month: string
+  profile_id: string
+  reason: string
+  /** Foto nueva; si no se envía se conserva la actual */
+  photo: File | null
+}
+
+export function useSaveFeatured() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (input: FeaturedInput) => {
+      const { data: existing, error: readError } = await supabase
+        .from('featured_riders')
+        .select('photo_path')
+        .eq('month', input.month)
+        .maybeSingle()
+      if (readError) throw readError
+
+      let photoPath = existing?.photo_path ?? null
+      if (input.photo) {
+        const compressed = await compressPhoto(input.photo)
+        const path = `${input.month}-${crypto.randomUUID()}.jpg`
+        const { error } = await supabase.storage.from(BUCKET).upload(path, compressed, { contentType: 'image/jpeg' })
+        if (error) throw error
+        photoPath = path
+      }
+
+      const { error } = await supabase
+        .from('featured_riders')
+        .upsert(
+          { month: input.month, profile_id: input.profile_id, reason: input.reason, photo_path: photoPath },
+          { onConflict: 'month' },
+        )
+      if (error) throw error
+
+      // La foto anterior ya no se usa
+      if (input.photo && existing?.photo_path) {
+        await supabase.storage.from(BUCKET).remove([existing.photo_path])
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['featured'] })
+      queryClient.invalidateQueries({ queryKey: ['public-home'] })
+    },
+  })
+}
+
+/** Datos de la portada pública: no requieren sesión. */
+export function usePublicHome() {
+  return useQuery({
+    queryKey: ['public-home'],
+    queryFn: async () => {
+      const [upcoming, featured] = await Promise.all([
+        supabase.rpc('public_upcoming_events'),
+        supabase.rpc('public_current_featured'),
+      ])
+      if (upcoming.error) throw upcoming.error
+      if (featured.error) throw featured.error
+      return { upcoming: upcoming.data, featured: featured.data[0] ?? null }
+    },
+  })
+}
