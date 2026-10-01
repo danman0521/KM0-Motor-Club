@@ -74,18 +74,40 @@ export function useSaveFeatured() {
   })
 }
 
+export type PublicPastEvent = { title: string; starts_at: string; location: string; photoUrls: string[] }
+
 /** Datos de la portada pública: no requieren sesión. */
 export function usePublicHome() {
   return useQuery({
     queryKey: ['public-home'],
     queryFn: async () => {
-      const [upcoming, featured] = await Promise.all([
+      const [upcoming, featured, past] = await Promise.all([
         supabase.rpc('public_upcoming_events'),
         supabase.rpc('public_current_featured'),
+        supabase.rpc('public_past_events'),
       ])
       if (upcoming.error) throw upcoming.error
       if (featured.error) throw featured.error
-      return { upcoming: upcoming.data, featured: featured.data[0] ?? null }
+      if (past.error) throw past.error
+
+      // Las fotos de la portada están en un bucket privado: se piden URL firmadas
+      const paths = past.data.flatMap((e) => e.photos)
+      const urls: Record<string, string> = {}
+      if (paths.length) {
+        const signed = await supabase.storage.from('event-photos').createSignedUrls(paths, 60 * 60)
+        if (signed.error) throw signed.error
+        for (const item of signed.data) {
+          if (item.path && item.signedUrl) urls[item.path] = item.signedUrl
+        }
+      }
+      const pastEvents: PublicPastEvent[] = past.data.map((e) => ({
+        title: e.title,
+        starts_at: e.starts_at,
+        location: e.location,
+        photoUrls: e.photos.flatMap((p) => (urls[p] ? [urls[p]] : [])),
+      }))
+
+      return { upcoming: upcoming.data, featured: featured.data[0] ?? null, past: pastEvents }
     },
   })
 }

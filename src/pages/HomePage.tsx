@@ -2,6 +2,7 @@ import { useAuth } from '../auth/AuthProvider'
 import { SocialLinks } from '../components/SocialLinks'
 import { ButtonLink, Card, EmptyState, ErrorNote, Spinner } from '../components/ui'
 import { site } from '../config/site'
+import { PastEventShowcase } from '../features/events/PastEventShowcase'
 import { FeaturedCard } from '../features/featured/FeaturedCard'
 import { featuredPhotoUrl, usePublicHome } from '../features/featured/api'
 import { formatEventDate } from '../lib/dates'
@@ -58,6 +59,39 @@ export function HomePage() {
                   </Card>
                 ))}
               </div>
+            )}
+          </section>
+
+          <section>
+            <div className="mb-4 flex flex-wrap items-end justify-between gap-3 border-b-2 border-red pb-2">
+              <h2 className="text-3xl font-bold">Eventos realizados</h2>
+              {isApproved && (
+                <ButtonLink to="/eventos" variant="ghost">
+                  Ver todos
+                </ButtonLink>
+              )}
+            </div>
+            {home.data.past.length === 0 ? (
+              <EmptyState>Aún no hay eventos realizados.</EmptyState>
+            ) : (
+              <>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {home.data.past.map((e) => (
+                    <PastEventShowcase
+                      key={`${e.title}-${e.starts_at}`}
+                      title={e.title}
+                      startsAt={e.starts_at}
+                      location={e.location}
+                      photoUrls={e.photoUrls}
+                    />
+                  ))}
+                </div>
+                {!isApproved && (
+                  <p className="mt-3 text-sm text-muted">
+                    Las galerías completas, las crónicas y los videos son para los miembros del grupo.
+                  </p>
+                )}
+              </>
             )}
           </section>
 

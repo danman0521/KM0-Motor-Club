@@ -261,9 +261,17 @@ isOneToOne: false
 "is_leader":
 { Args: Record<PropertyKey, never>; Returns: boolean
                            },
+"is_public_event_photo":
+{ Args: { "p_path": string }; Returns: boolean
+                           },
 "public_current_featured":
 { Args: Record<PropertyKey, never>; Returns: {
               "display_name": string,"month": string,"photo_path": string,"reason": string
+            }[]
+                           },
+"public_past_events":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "location": string,"photos": (string)[],"starts_at": string,"title": string
             }[]
                            },
 "public_upcoming_events":

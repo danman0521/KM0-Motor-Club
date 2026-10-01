@@ -75,7 +75,8 @@ beforeAll(async () => {
   const { error: upErr } = await admin.storage.from('event-photos').upload(photoPath, png, { contentType: 'image/png' })
   if (upErr) throw upErr
   storagePaths.push(photoPath)
-  const { error: photoErr } = await admin.from('event_photos').insert({ event_id: pastEventId, storage_path: photoPath })
+  // En un evento futuro: sus fotos no salen en la portada pública, así que son privadas
+  const { error: photoErr } = await admin.from('event_photos').insert({ event_id: futureEventId, storage_path: photoPath })
   if (photoErr) throw photoErr
 
   const { data: sug, error: sugErr } = await admin
@@ -174,7 +175,7 @@ describe('miembro aprobado', () => {
   it('lee eventos, fotos y sugerencias', async () => {
     const events = await member.client.from('events').select('id').in('id', [pastEventId, futureEventId])
     expect(events.data).toHaveLength(2)
-    const photos = await member.client.from('event_photos').select('id').eq('event_id', pastEventId)
+    const photos = await member.client.from('event_photos').select('id').eq('event_id', futureEventId)
     expect(photos.data).toHaveLength(1)
     const sugs = await member.client.from('suggestions').select('id').eq('id', suggestionId)
     expect(sugs.data).toHaveLength(1)

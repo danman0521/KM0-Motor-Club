@@ -47,6 +47,8 @@ export function PhotoManager({ event }: { event: EventRow }) {
       await setCover.mutateAsync(firstPath).catch(() => undefined)
     }
     await queryClient.invalidateQueries({ queryKey: ['event-photos', event.id] })
+    // La portada pública muestra fotos de los eventos realizados
+    queryClient.invalidateQueries({ queryKey: ['public-home'] })
     setBusy(false)
   }
 

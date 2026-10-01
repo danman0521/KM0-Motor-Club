@@ -92,3 +92,13 @@ src/pages/ProfilePage.tsx, PartnersPage.tsx, leader/LeaderPartnersPage.tsx
 4. Asistencia, calificación y comentarios en el detalle de evento; resúmenes en listas.
 5. Convenios: página de miembros y gestión de líderes.
 6. Datos de ejemplo, verificación en navegador, README.
+
+## 8. Añadido: eventos realizados en la portada pública
+
+A pedido del usuario, la portada muestra también los eventos realizados con sus fotos.
+
+- Se muestran los 6 eventos realizados más recientes, con título, fecha, lugar y hasta 4 fotos de cada uno: la portada primero y luego por orden de subida.
+- Esto cambia la regla original de privacidad: **esas fotos quedan visibles para cualquier visitante**. El resto de cada galería, las crónicas, los videos, los comentarios y las calificaciones siguen siendo solo para miembros aprobados.
+- En base de datos: la función `public_past_events()` devuelve solo esas columnas y rutas, y una política de almacenamiento permite a visitantes obtener URL firmadas únicamente de las rutas que esa función devuelve (`is_public_event_photo`).
+- Un evento sin fotos aparece con el logo del grupo.
+- Para elegir qué foto encabeza un evento en la portada, el líder usa "Usar de portada" en el editor del evento.

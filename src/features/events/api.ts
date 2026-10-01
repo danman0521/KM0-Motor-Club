@@ -170,6 +170,7 @@ export function useDeletePhoto(eventId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['event-photos', eventId] })
       queryClient.invalidateQueries({ queryKey: ['events'] })
+      queryClient.invalidateQueries({ queryKey: ['public-home'] })
     },
   })
 }
@@ -181,7 +182,10 @@ export function useSetCover(eventId: string) {
       const { error } = await supabase.from('events').update({ cover_photo_path: path }).eq('id', eventId)
       if (error) throw error
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['events'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['events'] })
+      queryClient.invalidateQueries({ queryKey: ['public-home'] })
+    },
   })
 }
 
