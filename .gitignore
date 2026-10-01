@@ -1,0 +1,10 @@
+# Configuración local de Claude Code (permisos propios de esta máquina)
+.claude/settings.local.json
+
+# Dependencias y compilados
+node_modules/
+dist/
+
+# Variables de entorno locales
+.env.local
+.env.*.local
