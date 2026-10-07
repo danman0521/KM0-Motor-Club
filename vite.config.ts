@@ -12,5 +12,7 @@ export default defineConfig({
     environment: 'jsdom',
     include: ['src/**/*.test.{ts,tsx}'],
     setupFiles: ['src/test-setup.ts'],
+    // Los formularios se prueban tecleando campo a campo; en runners lentos (CI) supera los 5 s por defecto
+    testTimeout: 20_000,
   },
 })
