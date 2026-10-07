@@ -97,7 +97,7 @@ function ProfileEditor({ profile }: { profile: Profile }) {
         <Card>
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
             {formError && <ErrorNote message={formError} />}
-            {saved && <p className="rounded-md border border-navy bg-navy-dark px-4 py-3 text-sm text-steel">Perfil guardado.</p>}
+            {saved && <p className="rounded-md border border-gunmetal bg-gunmetal-dark px-4 py-3 text-sm text-steel">Perfil guardado.</p>}
             <Field label="Nombre completo" error={nameError}>
               {(p) => <input {...p} maxLength={120} value={fullName} onChange={(e) => setFullName(e.target.value)} />}
             </Field>

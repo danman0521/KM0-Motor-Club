@@ -6,7 +6,7 @@ import { displayName } from '../../lib/supabase'
 import type { SuggestionWithAuthor } from './api'
 
 const statusLabel = { pending: 'Pendiente', approved: 'Aprobada', rejected: 'Rechazada' } as const
-const statusTone = { pending: 'neutral', approved: 'navy', rejected: 'red' } as const
+const statusTone = { pending: 'neutral', approved: 'gunmetal', rejected: 'red' } as const
 
 /** Lista de sugerencias; `actions` permite al panel de líderes añadir botones por fila. */
 export function SuggestionList({

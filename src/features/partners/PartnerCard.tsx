@@ -21,13 +21,13 @@ export function PartnerCard({
         {logo ? (
           <img src={logo} alt={`Logo de ${partner.name}`} loading="lazy" className="h-14 w-14 shrink-0 rounded-md bg-ink object-contain" />
         ) : (
-          <span aria-hidden className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-md bg-navy font-display text-2xl font-bold text-steel">
+          <span aria-hidden className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-md bg-gunmetal font-display text-2xl font-bold text-steel">
             {partner.name.charAt(0).toUpperCase()}
           </span>
         )}
         <div className="min-w-0">
           <h3 className="text-xl font-bold">{partner.name}</h3>
-          {showCategory && partner.category && <Badge tone="navy">{partner.category}</Badge>}
+          {showCategory && partner.category && <Badge tone="gunmetal">{partner.category}</Badge>}
         </div>
       </div>
 

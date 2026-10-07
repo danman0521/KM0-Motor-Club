@@ -100,7 +100,7 @@ export function PhotoManager({ event }: { event: EventRow }) {
                   {photo.url && <img src={photo.url} alt={`Foto ${i + 1}`} loading="lazy" className="h-full w-full object-cover" />}
                   {isCover && (
                     <span className="absolute left-1 top-1">
-                      <Badge tone="cream">Portada</Badge>
+                      <Badge tone="silver">Portada</Badge>
                     </span>
                   )}
                 </div>

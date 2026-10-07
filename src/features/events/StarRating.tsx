@@ -22,7 +22,7 @@ export function StarRating({
           disabled={disabled}
           onClick={() => onChange(star)}
           className={`text-3xl leading-none transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
-            value !== null && star <= value ? 'text-cream' : 'text-line hover:text-steel'
+            value !== null && star <= value ? 'text-silver' : 'text-line hover:text-steel'
           }`}
         >
           ★
@@ -37,7 +37,7 @@ export function RatingSummary({ average, count }: { average: number; count: numb
   if (count === 0) return null
   return (
     <span className="inline-flex items-center gap-1 text-sm text-steel">
-      <span className="text-cream" aria-hidden>
+      <span className="text-silver" aria-hidden>
         ★
       </span>
       <span>

@@ -40,7 +40,7 @@ export function SuggestionForm({ onSubmit }: { onSubmit: (input: SuggestionInput
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-4">
       {formError && <ErrorNote message={formError} />}
-      {sent && <p className="rounded-md border border-navy bg-navy-dark px-4 py-3 text-sm text-steel">¡Sugerencia enviada! Los líderes la revisarán.</p>}
+      {sent && <p className="rounded-md border border-gunmetal bg-gunmetal-dark px-4 py-3 text-sm text-steel">¡Sugerencia enviada! Los líderes la revisarán.</p>}
       <Field label="Título" error={titleError}>
         {(p) => <input {...p} maxLength={150} value={title} onChange={(e) => setTitle(e.target.value)} />}
       </Field>

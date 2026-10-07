@@ -38,7 +38,7 @@ export function EventDetailPage() {
           )}
         </div>
         <div className="flex flex-wrap items-center gap-3 text-steel">
-          <Badge tone={past ? 'neutral' : 'navy'}>{past ? 'Realizado' : 'Próximo'}</Badge>
+          <Badge tone={past ? 'neutral' : 'gunmetal'}>{past ? 'Realizado' : 'Próximo'}</Badge>
           <span className="first-letter:uppercase">{formatEventDate(e.starts_at)}</span>
           {e.location && <span className="text-muted">· {e.location}</span>}
         </div>

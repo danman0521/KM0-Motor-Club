@@ -19,7 +19,7 @@ export function Avatar({
   const base = `${sizes[size]} shrink-0 rounded-full`
   if (url) return <img src={url} alt="" loading="lazy" className={`${base} object-cover`} />
   return (
-    <span aria-hidden className={`${base} inline-flex items-center justify-center bg-navy font-display font-semibold text-steel`}>
+    <span aria-hidden className={`${base} inline-flex items-center justify-center bg-gunmetal font-display font-semibold text-steel`}>
       {initials(profile?.full_name ?? '')}
     </span>
   )

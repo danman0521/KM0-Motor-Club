@@ -50,7 +50,7 @@ export function FeaturedForm({ members, initial, hasPhoto, onSubmit }: Props) {
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-4">
       {formError && <ErrorNote message={formError} />}
-      {saved && <p className="rounded-md border border-navy bg-navy-dark px-4 py-3 text-sm text-steel">Destacado guardado.</p>}
+      {saved && <p className="rounded-md border border-gunmetal bg-gunmetal-dark px-4 py-3 text-sm text-steel">Destacado guardado.</p>}
       <Field label="Miembro" error={errors.profile}>
         {(p) => (
           <select {...p} value={profileId} onChange={(e) => setProfileId(e.target.value)}>

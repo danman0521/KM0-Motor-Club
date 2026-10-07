@@ -19,7 +19,7 @@ export function EventCard({
       to={`/eventos/${event.id}`}
       className="group block overflow-hidden rounded-lg border border-surface-2 bg-surface transition-colors hover:border-red"
     >
-      <div className="flex aspect-video items-center justify-center overflow-hidden bg-navy-dark">
+      <div className="flex aspect-video items-center justify-center overflow-hidden bg-gunmetal-dark">
         {coverUrl ? (
           <img src={coverUrl} alt="" loading="lazy" className="h-full w-full object-cover transition-transform group-hover:scale-105" />
         ) : (

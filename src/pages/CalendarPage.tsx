@@ -63,7 +63,7 @@ export function CalendarPage() {
                         {formatEventDate(e.starts_at)}
                         {e.location && <span className="text-muted"> · {e.location}</span>}
                         {!!going.data?.[e.id] && (
-                          <span className="text-cream">
+                          <span className="text-silver">
                             {' '}
                             · {going.data[e.id] === 1 ? '1 va' : `${going.data[e.id]} van`}
                           </span>

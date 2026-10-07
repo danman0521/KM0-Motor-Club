@@ -7,7 +7,7 @@ const base =
   'inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50'
 const variants: Record<Variant, string> = {
   primary: 'bg-red text-ink hover:bg-red-hover',
-  secondary: 'bg-navy text-ink hover:bg-navy-dark border border-navy',
+  secondary: 'bg-gunmetal text-ink hover:bg-gunmetal-dark border border-gunmetal',
   ghost: 'border border-line text-ink hover:bg-surface-2',
   danger: 'border border-red-dark text-red-hover hover:bg-red-dark hover:text-ink',
 }
@@ -74,12 +74,12 @@ export function Field({ label, error, hint, children }: FieldProps) {
   )
 }
 
-type Tone = 'neutral' | 'red' | 'navy' | 'cream'
+type Tone = 'neutral' | 'red' | 'gunmetal' | 'silver'
 const tones: Record<Tone, string> = {
   neutral: 'bg-surface-2 text-steel',
   red: 'bg-red-dark text-ink',
-  navy: 'bg-navy text-steel',
-  cream: 'bg-cream text-bg',
+  gunmetal: 'bg-gunmetal text-steel',
+  silver: 'bg-silver text-bg',
 }
 
 export function Badge({ children, tone = 'neutral' }: { children: ReactNode; tone?: Tone }) {

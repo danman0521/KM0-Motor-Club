@@ -1,6 +1,6 @@
-# Neutro
+# KMO Motor Club
 
-Plataforma web del grupo de moteros Neutro: portada pública, zona de miembros (eventos con asistencia, calificación y comentarios; calendario; motero destacado; sugerencias; convenios; perfil con foto) y panel de líderes.
+Plataforma web del grupo de moteros KMO Motor Club: portada pública, zona de miembros (eventos con asistencia, calificación y comentarios; calendario; motero destacado; sugerencias; convenios; perfil con foto) y panel de líderes.
 
 Por ahora todo corre en local. Nada se despliega ni usa servicios en la nube.
 
@@ -83,7 +83,7 @@ npx supabase migration up
 - `src/features/` — eventos (con asistencia, calificaciones y comentarios), calendario, destacado, sugerencias, convenios, perfil y miembros; cada una con sus consultas y componentes.
 - `src/auth/` — sesión, perfil y protección de rutas.
 - `src/config/site.ts` — nombre del grupo, lema, texto de la portada y redes sociales.
-- `src/index.css` — colores del tema, tomados del logo.
+- `src/index.css` — colores del tema, tomados del logo (`branding/logo-kmo.webp`).
 - `supabase/migrations/` — tablas, permisos por rol (RLS) y almacenamiento de fotos.
 
 Los permisos se aplican en la base de datos, no solo en la interfaz. `npm run test:rls` comprueba qué puede leer y escribir cada rol.

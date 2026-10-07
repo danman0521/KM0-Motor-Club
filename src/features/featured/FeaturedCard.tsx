@@ -15,9 +15,9 @@ export function FeaturedCard({ name, reason, month, photoUrl, size = 'compact' }
   const hero = size === 'hero'
   return (
     <div
-      className={`overflow-hidden rounded-lg border bg-surface ${hero ? 'border-cream md:flex' : 'border-surface-2'}`}
+      className={`overflow-hidden rounded-lg border bg-surface ${hero ? 'border-silver md:flex' : 'border-surface-2'}`}
     >
-      <div className={`flex items-center justify-center bg-navy-dark ${hero ? 'aspect-square md:w-80 md:shrink-0' : 'aspect-square'}`}>
+      <div className={`flex items-center justify-center bg-gunmetal-dark ${hero ? 'aspect-square md:w-80 md:shrink-0' : 'aspect-square'}`}>
         {photoUrl ? (
           <img src={photoUrl} alt={`Foto de ${name}`} loading="lazy" className="h-full w-full object-cover" />
         ) : (
@@ -25,7 +25,7 @@ export function FeaturedCard({ name, reason, month, photoUrl, size = 'compact' }
         )}
       </div>
       <div className={`space-y-2 ${hero ? 'p-6' : 'p-4'}`}>
-        <Badge tone={hero ? 'cream' : 'navy'}>
+        <Badge tone={hero ? 'silver' : 'gunmetal'}>
           <span className="first-letter:uppercase">{formatMonth(month)}</span>
         </Badge>
         <h3 className={`font-bold ${hero ? 'text-4xl' : 'text-xl'}`}>{name}</h3>

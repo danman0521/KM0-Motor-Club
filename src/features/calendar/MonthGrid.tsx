@@ -21,7 +21,7 @@ export function MonthGrid({
 
   return (
     <div className="overflow-hidden rounded-lg border border-surface-2">
-      <div className="grid grid-cols-7 bg-navy text-center font-display text-xs uppercase tracking-wide text-steel sm:text-sm">
+      <div className="grid grid-cols-7 bg-gunmetal text-center font-display text-xs uppercase tracking-wide text-steel sm:text-sm">
         {WEEKDAYS.map((d) => (
           <div key={d} className="py-2">
             {d}
@@ -41,7 +41,7 @@ export function MonthGrid({
               >
                 <span
                   className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs sm:text-sm ${
-                    isToday ? 'bg-cream font-bold text-bg' : inMonth ? 'text-ink' : 'text-line'
+                    isToday ? 'bg-silver font-bold text-bg' : inMonth ? 'text-ink' : 'text-line'
                   }`}
                 >
                   {day.getDate()}

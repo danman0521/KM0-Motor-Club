@@ -44,8 +44,8 @@ export function LeaderEventsPage() {
                     <Link to={`/eventos/${e.id}`} className="text-lg font-semibold hover:text-red-hover">
                       {e.title}
                     </Link>
-                    <Badge tone={past ? 'neutral' : 'navy'}>{past ? 'Realizado' : 'Próximo'}</Badge>
-                    {past && !e.chronicle && <Badge tone="cream">Falta la crónica</Badge>}
+                    <Badge tone={past ? 'neutral' : 'gunmetal'}>{past ? 'Realizado' : 'Próximo'}</Badge>
+                    {past && !e.chronicle && <Badge tone="silver">Falta la crónica</Badge>}
                   </div>
                   <p className="text-sm text-steel first-letter:uppercase">
                     {formatEventDate(e.starts_at)}

@@ -60,7 +60,7 @@ export function LeaderEventEditPage() {
         {back}
         <h2 className="text-2xl font-bold">{suggestion ? 'Aprobar sugerencia' : 'Nuevo evento'}</h2>
         {suggestion && (
-          <p className="rounded-md border border-navy bg-navy-dark px-4 py-3 text-sm text-steel">
+          <p className="rounded-md border border-gunmetal bg-gunmetal-dark px-4 py-3 text-sm text-steel">
             Sugerencia de {displayName(suggestion.author)}. Ajusta los datos y elige fecha y hora; al guardar se crea el
             evento y la sugerencia queda aprobada.
           </p>
@@ -102,7 +102,7 @@ export function LeaderEventEditPage() {
             Ver como miembro
           </Link>
         </div>
-        {saved && <p className="rounded-md border border-navy bg-navy-dark px-4 py-3 text-sm text-steel">Cambios guardados.</p>}
+        {saved && <p className="rounded-md border border-gunmetal bg-gunmetal-dark px-4 py-3 text-sm text-steel">Cambios guardados.</p>}
         <Card>
           <EventForm key={current.id} initial={current} submitLabel="Guardar cambios" onSubmit={update} />
         </Card>

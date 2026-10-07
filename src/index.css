@@ -1,20 +1,20 @@
 @import 'tailwindcss';
 
-/* Colores tomados del logo (branding/logo-neutro.webp) */
+/* Colores tomados del logo (branding/logo-kmo.webp): negro, rojo encendido y cromo */
 @theme {
-  --color-bg: #020202;
-  --color-surface: #171718;
-  --color-surface-2: #272728;
-  --color-line: #575758;
-  --color-muted: #868688;
-  --color-ink: #fcfcfc;
-  --color-red: #ab1516;
-  --color-red-hover: #c73032;
-  --color-red-dark: #770b0e;
-  --color-navy: #263355;
-  --color-navy-dark: #1a223b;
-  --color-steel: #b4bacc;
-  --color-cream: #ceb98b;
+  --color-bg: #050505;
+  --color-surface: #151517;
+  --color-surface-2: #232326;
+  --color-line: #56565a;
+  --color-muted: #8e8e94;
+  --color-ink: #fcfbfb;
+  --color-red: #d40a0a;
+  --color-red-hover: #f01515;
+  --color-red-dark: #870606;
+  --color-gunmetal: #44444a;
+  --color-gunmetal-dark: #2a2a2f;
+  --color-steel: #c6c6ca;
+  --color-silver: #d6d5d8;
 
   --font-display: 'Oswald Variable', 'Arial Narrow', sans-serif;
   --font-sans: 'Inter Variable', system-ui, sans-serif;

@@ -17,7 +17,7 @@ export function PastEventShowcase({ title, startsAt, location, photoUrls }: Prop
 
   return (
     <article className="overflow-hidden rounded-lg border border-surface-2 bg-surface">
-      <div className="flex aspect-video items-center justify-center overflow-hidden bg-navy-dark">
+      <div className="flex aspect-video items-center justify-center overflow-hidden bg-gunmetal-dark">
         {main ? (
           <img src={main} alt={`Foto de ${title}`} loading="lazy" className="h-full w-full object-cover" />
         ) : (
