@@ -3,7 +3,7 @@ import { Button, ErrorNote, Field } from '../../components/ui'
 import { ageFrom } from '../../lib/dates'
 import { friendlyError } from '../../lib/errors'
 import { isImageFile } from '../../lib/images'
-import { BLOOD_TYPES, type ApplicationInput, type ApplicationSubmission, type BloodType } from './api'
+import { BLOOD_TYPES, type ApplicationInput, type ApplicationSubmission, type BloodType } from './types'
 
 const MIN_AGE = 16
 const MAX_AGE = 100

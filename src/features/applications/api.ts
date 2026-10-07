@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { Enums, Tables } from '../../lib/database.types'
+import type { Tables } from '../../lib/database.types'
 import { compressPhoto } from '../../lib/images'
 import { supabase } from '../../lib/supabase'
 
@@ -7,29 +7,9 @@ const BUCKET = 'applications'
 const SIGNED_URL_SECONDS = 60 * 60
 
 export type Application = Tables<'applications'>
-export type BloodType = Enums<'blood_type'>
-export const BLOOD_TYPES: BloodType[] = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
-
-export type ApplicationInput = {
-  city: string
-  occupation: string
-  birth_date: string
-  phone: string
-  other_club: string
-  blood_type: BloodType
-  allergies: string
-  medical_conditions: string
-  emergency_contact_name: string
-  emergency_contact_phone: string
-}
-
-export type ApplicationSubmission = {
-  input: ApplicationInput
-  /** Foto de perfil nueva (va al bucket de avatars); null conserva la actual */
-  riderPhoto: File | null
-  /** Foto de la moto nueva; null conserva la actual */
-  motoPhoto: File | null
-}
+export type { ApplicationInput, ApplicationSubmission, BloodType } from './types'
+export { BLOOD_TYPES } from './types'
+import type { ApplicationSubmission } from './types'
 
 /** La ficha de un miembro; la propia o, para líderes, la de cualquiera. */
 export function useApplication(profileId: string | undefined) {
