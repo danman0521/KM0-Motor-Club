@@ -23,6 +23,15 @@ type AuthValue = {
 
 const AuthContext = createContext<AuthValue | null>(null)
 
+/**
+ * Dirección a la que vuelve el enlace del correo de confirmación. Debe incluir la
+ * ruta de la web (en GitHub Pages es /KM0-Motor-Club/); si no se indica, Supabase
+ * usa solo el origen y el enlace cae en una página inexistente.
+ */
+function appUrl(): string {
+  return new URL('.', window.location.href).href
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient()
   const [session, setSession] = useState<Session | null>(null)
@@ -67,14 +76,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { full_name: fullName, nickname } },
+          options: { data: { full_name: fullName, nickname }, emailRedirectTo: appUrl() },
         })
         if (error) throw error
         // Sin sesión: el proyecto exige confirmar el correo (así está en la nube)
         return { needsConfirmation: !data.session }
       },
       async resendConfirmation(email) {
-        const { error } = await supabase.auth.resend({ type: 'signup', email })
+        const { error } = await supabase.auth.resend({ type: 'signup', email, options: { emailRedirectTo: appUrl() } })
         if (error) throw error
       },
       async signOut() {
