@@ -5,9 +5,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { RegisterPage } from './RegisterPage'
 
 const signUp = vi.fn()
+const resendConfirmation = vi.fn()
 
 vi.mock('../auth/AuthProvider', () => ({
-  useAuth: () => ({ session: null, loading: false, signUp }),
+  useAuth: () => ({ session: null, loading: false, signUp, resendConfirmation }),
 }))
 
 function renderPage() {
@@ -48,7 +49,7 @@ describe('RegisterPage', () => {
   })
 
   it('registra con los datos recortados', async () => {
-    signUp.mockResolvedValue(undefined)
+    signUp.mockResolvedValue({ needsConfirmation: false })
     renderPage()
 
     await userEvent.type(screen.getByLabelText('Nombre completo'), ' Ana Pérez ')
@@ -63,6 +64,25 @@ describe('RegisterPage', () => {
       fullName: 'Ana Pérez',
       nickname: 'La Loba',
     })
+  })
+
+  it('si hay que confirmar el correo, muestra esa pantalla y permite reenviar', async () => {
+    signUp.mockResolvedValue({ needsConfirmation: true })
+    resendConfirmation.mockResolvedValue(undefined)
+    renderPage()
+
+    await userEvent.type(screen.getByLabelText('Nombre completo'), 'Ana Pérez')
+    await userEvent.type(screen.getByLabelText('Correo'), 'ana@ejemplo.com')
+    await userEvent.type(screen.getByLabelText('Contraseña'), 'secreta1')
+    await userEvent.click(screen.getByRole('button', { name: 'Crear cuenta' }))
+
+    expect(await screen.findByText('Revisa tu correo')).toBeInTheDocument()
+    expect(screen.getByText('ana@ejemplo.com')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Nombre completo')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Reenviar correo' }))
+    expect(resendConfirmation).toHaveBeenCalledWith('ana@ejemplo.com')
+    expect(await screen.findByRole('button', { name: 'Correo reenviado' })).toBeDisabled()
   })
 
   it('muestra un mensaje claro si el correo ya está registrado', async () => {

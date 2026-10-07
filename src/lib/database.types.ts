@@ -23,7 +23,26 @@ export type Database = {
           }
         },"public": {
           Tables: {
-            "event_attendance": {
+            "applications": {
+                  Row: {
+                    "allergies": string,"birth_date": string,"blood_type": Database["public"]['Enums']["blood_type"],"city": string,"emergency_contact_name": string,"emergency_contact_phone": string,"medical_conditions": string,"moto_photo_path": string | null,"occupation": string,"other_club": string,"phone": string,"profile_id": string,"submitted_at": string,"updated_at": string
+                  }
+                  Insert: {
+                    "allergies"?: string,"birth_date": string,"blood_type": Database["public"]['Enums']["blood_type"],"city": string,"emergency_contact_name": string,"emergency_contact_phone": string,"medical_conditions"?: string,"moto_photo_path"?: string | null,"occupation": string,"other_club"?: string,"phone"?: string,"profile_id"?: string,"submitted_at"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "allergies"?: string,"birth_date"?: string,"blood_type"?: Database["public"]['Enums']["blood_type"],"city"?: string,"emergency_contact_name"?: string,"emergency_contact_phone"?: string,"medical_conditions"?: string,"moto_photo_path"?: string | null,"occupation"?: string,"other_club"?: string,"phone"?: string,"profile_id"?: string,"submitted_at"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "applications_profile_id_fkey"
+      columns: ["profile_id"]
+isOneToOne: true
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"event_attendance": {
                   Row: {
                     "event_id": string,"profile_id": string,"status": Database["public"]['Enums']["attendance_status"],"updated_at": string
                   }
@@ -281,7 +300,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "attendance_status": "going"|"not_going","member_role": "member"|"leader","member_status": "pending"|"approved"|"rejected","suggestion_status": "pending"|"approved"|"rejected"
+            "attendance_status": "going"|"not_going","blood_type": "A+"|"A-"|"B+"|"B-"|"AB+"|"AB-"|"O+"|"O-","member_role": "member"|"leader","member_status": "pending"|"approved"|"rejected","suggestion_status": "pending"|"approved"|"rejected"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -401,7 +420,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "attendance_status": ["going", "not_going"],"member_role": ["member", "leader"],"member_status": ["pending", "approved", "rejected"],"suggestion_status": ["pending", "approved", "rejected"]
+            "attendance_status": ["going", "not_going"],"blood_type": ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],"member_role": ["member", "leader"],"member_status": ["pending", "approved", "rejected"],"suggestion_status": ["pending", "approved", "rejected"]
           }
         }
 } as const

@@ -67,3 +67,12 @@ export function formatMonth(isoDate: string): string {
   const [y, m] = isoDate.split('-').map(Number)
   return monthFormat.format(new Date(y, m - 1, 1))
 }
+
+/** Edad cumplida a partir de una fecha `YYYY-MM-DD`. */
+export function ageFrom(birthDate: string, now: Date = new Date()): number {
+  const [y, m, d] = birthDate.split('-').map(Number)
+  let age = now.getFullYear() - y
+  const beforeBirthday = now.getMonth() + 1 < m || (now.getMonth() + 1 === m && now.getDate() < d)
+  if (beforeBirthday) age -= 1
+  return age
+}

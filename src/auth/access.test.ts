@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { resolveAccess } from './access'
+import { pendingRedirect, resolveAccess } from './access'
 
 const member = { role: 'member', status: 'approved' } as const
 const leader = { role: 'leader', status: 'approved' } as const
@@ -31,5 +31,31 @@ describe('resolveAccess', () => {
   it('líder entra a todo', () => {
     expect(resolveAccess({ hasSession: true, profile: leader }, 'approved')).toBe('ok')
     expect(resolveAccess({ hasSession: true, profile: leader }, 'leader')).toBe('ok')
+  })
+})
+
+describe('pendingRedirect', () => {
+  const pending = { role: 'member', status: 'pending' } as const
+  const rejected = { role: 'member', status: 'rejected' } as const
+
+  it('sin sesión no redirige a nada', () => {
+    expect(pendingRedirect({ hasSession: false, profile: null }, '/')).toBeNull()
+    expect(pendingRedirect({ hasSession: false, profile: null }, '/ingresar')).toBeNull()
+  })
+
+  it('con sesión pero sin perfil cargado no redirige', () => {
+    expect(pendingRedirect({ hasSession: true, profile: null }, '/')).toBeNull()
+  })
+
+  it('pendiente o rechazado solo puede ver la pantalla de espera', () => {
+    expect(pendingRedirect({ hasSession: true, profile: pending }, '/')).toBe('/pendiente')
+    expect(pendingRedirect({ hasSession: true, profile: pending }, '/eventos')).toBe('/pendiente')
+    expect(pendingRedirect({ hasSession: true, profile: rejected }, '/registro')).toBe('/pendiente')
+    expect(pendingRedirect({ hasSession: true, profile: pending }, '/pendiente')).toBeNull()
+  })
+
+  it('aprobado se queda donde está', () => {
+    expect(pendingRedirect({ hasSession: true, profile: member }, '/')).toBeNull()
+    expect(pendingRedirect({ hasSession: true, profile: leader }, '/lider')).toBeNull()
   })
 })

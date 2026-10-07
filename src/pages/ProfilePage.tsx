@@ -1,4 +1,5 @@
 import { useRef, useState, type ChangeEvent, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
 import { Avatar } from '../components/Avatar'
 import { Badge, Button, Card, ErrorNote, Field, PageTitle } from '../components/ui'
@@ -92,6 +93,9 @@ function ProfileEditor({ profile }: { profile: Profile }) {
           </div>
           {photoError && <ErrorNote message={photoError} />}
           <p className="text-xs text-muted">Tu foto la ven los demás miembros junto a tu nombre.</p>
+          <Link to="/ficha" className="text-sm font-semibold text-steel underline hover:text-ink">
+            Mi ficha (contacto y seguridad)
+          </Link>
         </Card>
 
         <Card>

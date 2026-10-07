@@ -238,6 +238,26 @@ for (const partner of PARTNERS) {
   if (!found) check(await admin.from('partners').insert({ ...partner, created_by: leader }), `crear ${partner.name}`)
 }
 
+// --- Fichas de postulación ---------------------------------------------------
+const APPLICATIONS = [
+  {
+    profile_id: andrea, city: 'Envigado', occupation: 'Diseñadora gráfica', birth_date: '1992-03-14', phone: '300 555 0201',
+    other_club: '', blood_type: 'O+', allergies: 'Penicilina', medical_conditions: '',
+    emergency_contact_name: 'Luisa Gómez', emergency_contact_phone: '300 555 0202',
+  },
+  {
+    profile_id: julian, city: 'Medellín, Belén', occupation: 'Mecánico', birth_date: '1985-11-02', phone: '300 555 0301',
+    other_club: 'Los Buitres MC', blood_type: 'A-', allergies: '', medical_conditions: 'Asma leve; usa inhalador',
+    emergency_contact_name: 'Carmen Torres', emergency_contact_phone: '300 555 0302',
+  },
+  {
+    profile_id: ids['pendiente@neutro.local'], city: 'Itagüí', occupation: 'Estudiante', birth_date: '2003-07-21', phone: '',
+    other_club: '', blood_type: 'B+', allergies: 'Mariscos', medical_conditions: '',
+    emergency_contact_name: 'Rosa Díaz', emergency_contact_phone: '300 555 0402',
+  },
+]
+check(await admin.from('applications').upsert(APPLICATIONS, { onConflict: 'profile_id', ignoreDuplicates: true }), 'fichas')
+
 console.log('Datos de ejemplo listos.')
 console.log('Cuentas de prueba (la contraseña está en scripts/seed.mjs):')
 for (const a of ACCOUNTS) console.log(`  ${a.email}  →  ${a.role === 'leader' ? 'líder' : a.status === 'pending' ? 'pendiente' : 'miembro'}`)
