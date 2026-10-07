@@ -102,3 +102,10 @@ A pedido del usuario, la portada muestra también los eventos realizados con sus
 - En base de datos: la función `public_past_events()` devuelve solo esas columnas y rutas, y una política de almacenamiento permite a visitantes obtener URL firmadas únicamente de las rutas que esa función devuelve (`is_public_event_photo`).
 - Un evento sin fotos aparece con el logo del grupo.
 - Para elegir qué foto encabeza un evento en la portada, el líder usa "Usar de portada" en el editor del evento.
+
+## 9. Añadido (7 de octubre): pantalla de espera obligatoria y ficha de postulación
+
+- **Registro:** si el proyecto exige confirmar el correo (así está en la nube), tras crear la cuenta se muestra "Revisa tu correo" con botón de reenvío. Una cuenta con sesión pero sin aprobar solo puede ver la pantalla de espera; cualquier otra ruta redirige a `/pendiente`. La pantalla de espera consulta el perfil cada 30 s y pasa sola a la zona de miembros al ser aprobada.
+- **Ficha de postulación (tabla `applications`, una por perfil):** ciudad, ocupación, fecha de nacimiento (mínimo 16 años), celular, otro grupo motero, tipo de sangre (RH), alergias, condiciones de salud, nombre y teléfono del contacto de emergencia, foto de la moto (bucket privado `applications`) y foto de la persona (va a su foto de perfil, por lo que ahora cualquier cuenta con sesión puede subir a su propia carpeta de `avatars`).
+- **Quién la ve:** la propia persona (la llena en la espera y la edita luego en `/ficha`, enlazada desde "Mi perfil") y los líderes (botón "Ver ficha" en el panel de miembros, tanto para pendientes como para aprobados). Nadie más.
+- **Decisiones por defecto:** las fotos son opcionales; los campos obligatorios son ciudad, ocupación, fecha de nacimiento, RH y contacto de emergencia; no se puede borrar una ficha, solo editarla.

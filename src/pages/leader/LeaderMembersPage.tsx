@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useAuth } from '../../auth/AuthProvider'
 import { Avatar } from '../../components/Avatar'
-import { Badge, Button, Card, EmptyState, ErrorNote, Spinner } from '../../components/ui'
+import { Badge, Button, Card, EmptyState, ErrorNote, Modal, Spinner } from '../../components/ui'
+import { ApplicationDetails } from '../../features/applications/ApplicationDetails'
+import { useApplicationIds } from '../../features/applications/api'
 import { useMembers, useSetMemberRole, useSetMemberStatus } from '../../features/members/api'
 import { formatDayOf } from '../../lib/dates'
 import { friendlyError } from '../../lib/errors'
@@ -28,6 +30,15 @@ export function LeaderMembersPage() {
   const setStatus = useSetMemberStatus()
   const setRole = useSetMemberRole()
   const [actionError, setActionError] = useState('')
+  const applications = useApplicationIds()
+  // Miembro cuya ficha se está viendo en el diálogo
+  const [viewing, setViewing] = useState<Profile | null>(null)
+
+  const fichaButton = (m: Profile) => (
+    <Button variant="ghost" onClick={() => setViewing(m)}>
+      {applications.data?.has(m.id) ? 'Ver ficha' : 'Sin ficha'}
+    </Button>
+  )
 
   async function run(action: () => Promise<unknown>) {
     setActionError('')
@@ -60,7 +71,8 @@ export function LeaderMembersPage() {
               <li key={m.id}>
                 <Card className="flex flex-wrap items-center justify-between gap-3">
                   <MemberName member={m} />
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
+                    {fichaButton(m)}
                     <Button disabled={busy} onClick={() => run(() => setStatus.mutateAsync({ id: m.id, status: 'approved' }))}>
                       Aprobar
                     </Button>
@@ -88,8 +100,10 @@ export function LeaderMembersPage() {
                     {m.role === 'leader' && <Badge tone="red">Líder</Badge>}
                     {isMe && <Badge>Tú</Badge>}
                   </div>
+                  <div className="flex flex-wrap gap-2">
+                    {fichaButton(m)}
                   {!isMe && (
-                    <div className="flex flex-wrap gap-2">
+                    <>
                       {m.role === 'leader' ? (
                         <Button variant="ghost" disabled={busy} onClick={() => run(() => setRole.mutateAsync({ id: m.id, role: 'member' }))}>
                           Quitar líder
@@ -110,14 +124,21 @@ export function LeaderMembersPage() {
                       >
                         Revocar acceso
                       </Button>
-                    </div>
+                    </>
                   )}
+                  </div>
                 </Card>
               </li>
             )
           })}
         </ul>
       </section>
+
+      {viewing && (
+        <Modal title="Ficha de postulación" onClose={() => setViewing(null)} wide>
+          <ApplicationDetails profile={viewing} />
+        </Modal>
+      )}
 
       {rejected.length > 0 && (
         <section>

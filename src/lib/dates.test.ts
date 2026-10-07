@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildMonthGrid, isPast, isSameDay, monthStart, toLocalInputValue } from './dates'
+import { ageFrom, buildMonthGrid, isPast, isSameDay, monthStart, toLocalInputValue } from './dates'
 
 describe('buildMonthGrid', () => {
   it('cubre el mes con semanas completas de lunes a domingo', () => {
@@ -64,5 +64,15 @@ describe('toLocalInputValue', () => {
   it('convierte a formato de <input type="datetime-local"> en hora local', () => {
     const local = new Date(2026, 9, 5, 7, 30)
     expect(toLocalInputValue(local.toISOString())).toBe('2026-10-05T07:30')
+  })
+})
+
+describe('ageFrom', () => {
+  const now = new Date(2026, 9, 7) // 7 de octubre de 2026
+  it('resta un año si aún no ha cumplido', () => {
+    expect(ageFrom('1990-05-20', now)).toBe(36)
+    expect(ageFrom('1990-12-20', now)).toBe(35)
+    expect(ageFrom('2010-10-07', now)).toBe(16)
+    expect(ageFrom('2010-10-08', now)).toBe(15)
   })
 })

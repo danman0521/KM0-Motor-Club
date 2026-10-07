@@ -112,11 +112,15 @@ describe('visitante y pendiente', () => {
     expect(comment.error).not.toBeNull()
   })
 
-  it('un pendiente no sube foto de perfil', async () => {
-    const up = await pending.client.storage
+  it('un pendiente sí sube su foto de perfil (la pide la ficha de postulación), pero solo a su carpeta', async () => {
+    const own = await pending.client.storage
       .from('avatars')
       .upload(`${pending.id}/foto.png`, png, { contentType: 'image/png' })
-    expect(up.error).not.toBeNull()
+    expect(own.error).toBeNull()
+    const other = await pending.client.storage
+      .from('avatars')
+      .upload(`${member.id}/intruso.png`, png, { contentType: 'image/png' })
+    expect(other.error).not.toBeNull()
   })
 })
 
