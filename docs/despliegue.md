@@ -57,3 +57,18 @@ los datos de ejemplo no deben existir en el sitio real.
 - Los permisos siguen aplicándose en la base de datos (RLS).
 - Para seguir desarrollando en local no hace falta tocar nada: `.env.local`
   apunta al Supabase local y la nube usa las variables del repositorio.
+
+## Estado actual (7 de octubre de 2026)
+
+- Repositorio: <https://github.com/danman0521/KM0-Motor-Club> (público, Pages con origen GitHub Actions).
+- Web publicada: <https://danman0521.github.io/KM0-Motor-Club/>.
+- Supabase: proyecto `xsetwonpdnkcniwvswnu` (organización "KMO Motor Club", plan Free, región São Paulo). Las variables `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` ya están en el repositorio; el Site URL y la Redirect URL de autenticación apuntan a la web publicada.
+- Las tres migraciones ya están aplicadas en la nube.
+
+### Aplicar migraciones nuevas sin `supabase login`
+
+La conexión directa (`db.<ref>.supabase.co`) no resuelve desde este PC (solo IPv6); funciona el *session pooler*. La contraseña de la base de datos está en `supabase/.env.local` (ignorado por git) como `SUPABASE_DB_PASSWORD`:
+
+```bash
+npx supabase db push --db-url "postgresql://postgres.xsetwonpdnkcniwvswnu:<contraseña>@aws-1-sa-east-1.pooler.supabase.com:5432/postgres"
+```
