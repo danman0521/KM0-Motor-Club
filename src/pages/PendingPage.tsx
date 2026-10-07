@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
 import { Button, Card, Spinner } from '../components/ui'
@@ -7,6 +7,13 @@ export function PendingPage() {
   const { session, profile, loading, isApproved, signOut, refreshProfile } = useAuth()
   const navigate = useNavigate()
   const [checking, setChecking] = useState(false)
+
+  // Cuando un líder aprueba, la pantalla se entera sola
+  useEffect(() => {
+    if (!session || isApproved) return
+    const id = window.setInterval(() => refreshProfile(), 30_000)
+    return () => window.clearInterval(id)
+  }, [session, isApproved, refreshProfile])
 
   if (loading) return <Spinner />
   if (!session) return <Navigate to="/ingresar" replace />

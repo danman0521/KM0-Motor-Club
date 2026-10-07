@@ -7,7 +7,7 @@ import { friendlyError } from '../lib/errors'
 type Errors = { fullName?: string; email?: string; password?: string }
 
 export function RegisterPage() {
-  const { session, loading, signUp } = useAuth()
+  const { session, loading, signUp, resendConfirmation } = useAuth()
 
   const [fullName, setFullName] = useState('')
   const [nickname, setNickname] = useState('')
@@ -16,6 +16,10 @@ export function RegisterPage() {
   const [errors, setErrors] = useState<Errors>({})
   const [formError, setFormError] = useState('')
   const [busy, setBusy] = useState(false)
+  // Correo al que se envió la confirmación; con valor, se muestra la pantalla "Revisa tu correo"
+  const [sentTo, setSentTo] = useState('')
+  const [resendState, setResendState] = useState<'idle' | 'sending' | 'sent'>('idle')
+  const [resendError, setResendError] = useState('')
 
   if (loading) return <Spinner />
   // Recién registrado queda pendiente; la guarda lo lleva a la pantalla de espera
@@ -34,12 +38,52 @@ export function RegisterPage() {
 
     setBusy(true)
     try {
-      await signUp({ email: email.trim(), password, fullName: fullName.trim(), nickname: nickname.trim() })
+      const { needsConfirmation } = await signUp({
+        email: email.trim(),
+        password,
+        fullName: fullName.trim(),
+        nickname: nickname.trim(),
+      })
+      if (needsConfirmation) setSentTo(email.trim())
     } catch (err) {
       setFormError(friendlyError(err))
     } finally {
       setBusy(false)
     }
+  }
+
+  async function resend() {
+    setResendState('sending')
+    setResendError('')
+    try {
+      await resendConfirmation(sentTo)
+      setResendState('sent')
+    } catch (err) {
+      setResendState('idle')
+      setResendError(friendlyError(err))
+    }
+  }
+
+  if (sentTo) {
+    return (
+      <div className="mx-auto max-w-md">
+        <Card className="space-y-4 text-center">
+          <h1 className="text-2xl font-bold">Revisa tu correo</h1>
+          <p className="text-steel">
+            Te enviamos un enlace a <span className="font-semibold text-ink">{sentTo}</span>. Ábrelo para confirmar tu
+            cuenta.
+          </p>
+          <p className="text-sm text-muted">
+            Después de confirmar, tu solicitud queda en espera hasta que un líder la apruebe. Si no ves el correo, mira
+            en la carpeta de spam.
+          </p>
+          {resendError && <ErrorNote message={resendError} />}
+          <Button variant="ghost" onClick={resend} disabled={resendState !== 'idle'}>
+            {resendState === 'sending' ? 'Enviando…' : resendState === 'sent' ? 'Correo reenviado' : 'Reenviar correo'}
+          </Button>
+        </Card>
+      </div>
+    )
   }
 
   return (

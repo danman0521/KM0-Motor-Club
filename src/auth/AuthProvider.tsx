@@ -14,7 +14,9 @@ type AuthValue = {
   isLeader: boolean
   isApproved: boolean
   signIn(email: string, password: string): Promise<void>
-  signUp(input: SignUpInput): Promise<void>
+  /** `needsConfirmation` es true cuando la cuenta debe confirmar el correo antes de entrar */
+  signUp(input: SignUpInput): Promise<{ needsConfirmation: boolean }>
+  resendConfirmation(email: string): Promise<void>
   signOut(): Promise<void>
   refreshProfile(): Promise<void>
 }
@@ -62,11 +64,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (error) throw error
       },
       async signUp({ email, password, fullName, nickname }) {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: { data: { full_name: fullName, nickname } },
         })
+        if (error) throw error
+        // Sin sesión: el proyecto exige confirmar el correo (así está en la nube)
+        return { needsConfirmation: !data.session }
+      },
+      async resendConfirmation(email) {
+        const { error } = await supabase.auth.resend({ type: 'signup', email })
         if (error) throw error
       },
       async signOut() {
