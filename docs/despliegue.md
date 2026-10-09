@@ -76,3 +76,13 @@ npx supabase db push --db-url "postgresql://postgres.xsetwonpdnkcniwvswnu:<contr
 ### Correo (SMTP)
 
 Supabase sin SMTP propio solo envía 2 correos por hora, lo que bloqueaba los registros. Desde el 7 de octubre de 2026 los correos de autenticación salen por **Brevo** (plan gratuito, 300 al día): *Authentication → Emails → SMTP Settings* con `smtp-relay.brevo.com:587`, usuario `bd2c31001@smtp-brevo.com`, remitente "KMO Motor Club" (sin dominio propio, Brevo lo envía desde una dirección `@…brevosend.com`). La clave SMTP se generó en Brevo (*SMTP y API*, sin expiración) y solo la conoce el dueño. El límite de Supabase (*Rate Limits → emails/h*) está en 60.
+
+### Migración 20261009000000 (garaje, ruta, directorio, anuncios)
+
+Antes de que la web publicada use estas funciones, aplica la migración en la nube:
+
+```bash
+npx supabase db push --db-url "postgresql://postgres.xsetwonpdnkcniwvswnu:<contraseña>@aws-1-sa-east-1.pooler.supabase.com:5432/postgres"
+```
+
+Crea las tablas `motorcycles` y `announcements`, el bucket `motorcycles`, las columnas `meeting_point`/`map_url` en `events` y la función `member_directory()`.
