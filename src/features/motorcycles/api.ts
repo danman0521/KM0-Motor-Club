@@ -39,35 +39,53 @@ export function useMotorcycles(profileId: string | undefined) {
   })
 }
 
+/**
+ * Guarda (crea o edita) una moto. Si hay foto nueva: se sube, luego se escribe
+ * la fila, y solo tras un guardado exitoso se borra la foto antigua. Si el
+ * guardado falla, se limpia la foto recién subida para no dejarla huérfana.
+ */
+export async function saveMotorcycle(userId: string, { id, input }: { id?: string; input: MotorcycleInput }): Promise<void> {
+  const { photo, ...fields } = input
+
+  let oldPhotoPath: string | null = null
+  if (id) {
+    const { data: current, error } = await supabase.from('motorcycles').select('photo_path').eq('id', id).single()
+    if (error) throw error
+    oldPhotoPath = current?.photo_path ?? null
+  }
+
+  let newPhotoPath: string | null = null
+  if (photo) {
+    const compressed = await compressPhoto(photo)
+    const path = `${userId}/${crypto.randomUUID()}.jpg`
+    const { error } = await supabase.storage.from(BUCKET).upload(path, compressed, { contentType: 'image/jpeg' })
+    if (error) throw error
+    newPhotoPath = path
+  }
+
+  try {
+    if (id) {
+      // Sin foto nueva no se toca photo_path (conserva la existente)
+      const row = newPhotoPath ? { ...fields, photo_path: newPhotoPath } : fields
+      const { error } = await supabase.from('motorcycles').update(row).eq('id', id)
+      if (error) throw error
+    } else {
+      const { error } = await supabase.from('motorcycles').insert({ ...fields, photo_path: newPhotoPath })
+      if (error) throw error
+    }
+  } catch (err) {
+    if (newPhotoPath) await supabase.storage.from(BUCKET).remove([newPhotoPath])
+    throw err
+  }
+
+  // El guardado funcionó: ya se puede retirar la foto reemplazada
+  if (newPhotoPath && oldPhotoPath) await supabase.storage.from(BUCKET).remove([oldPhotoPath])
+}
+
 export function useSaveMotorcycle(userId: string) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async ({ id, input }: { id?: string; input: MotorcycleInput }) => {
-      const { photo, ...fields } = input
-      let photoPath: string | null | undefined
-      if (id) {
-        const { data: current } = await supabase.from('motorcycles').select('photo_path').eq('id', id).single()
-        photoPath = current?.photo_path ?? null
-      }
-      if (photo) {
-        const compressed = await compressPhoto(photo)
-        const path = `${userId}/${crypto.randomUUID()}.jpg`
-        const { error } = await supabase.storage.from(BUCKET).upload(path, compressed, { contentType: 'image/jpeg' })
-        if (error) throw error
-        const previous = photoPath
-        photoPath = path
-        if (previous) await supabase.storage.from(BUCKET).remove([previous])
-      }
-
-      if (id) {
-        const row = photoPath !== undefined ? { ...fields, photo_path: photoPath } : fields
-        const { error } = await supabase.from('motorcycles').update(row).eq('id', id)
-        if (error) throw error
-      } else {
-        const { error } = await supabase.from('motorcycles').insert({ ...fields, photo_path: photoPath ?? null })
-        if (error) throw error
-      }
-    },
+    mutationFn: (args: { id?: string; input: MotorcycleInput }) => saveMotorcycle(userId, args),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['motorcycles', userId] })
       queryClient.invalidateQueries({ queryKey: ['directory'] })
