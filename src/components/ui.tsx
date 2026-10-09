@@ -74,12 +74,13 @@ export function Field({ label, error, hint, children }: FieldProps) {
   )
 }
 
-type Tone = 'neutral' | 'red' | 'gunmetal' | 'silver'
+type Tone = 'neutral' | 'red' | 'gunmetal' | 'silver' | 'green'
 const tones: Record<Tone, string> = {
   neutral: 'bg-surface-2 text-steel',
   red: 'bg-red-dark text-ink',
   gunmetal: 'bg-gunmetal text-steel',
   silver: 'bg-silver text-bg',
+  green: 'bg-emerald-900 text-emerald-200',
 }
 
 export function Badge({ children, tone = 'neutral' }: { children: ReactNode; tone?: Tone }) {
