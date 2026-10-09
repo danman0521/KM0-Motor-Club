@@ -11,6 +11,8 @@ export type EventInput = {
   location: string
   starts_at: string
   chronicle: string | null
+  meeting_point: string
+  map_url: string | null
 }
 
 export function useEvents() {
