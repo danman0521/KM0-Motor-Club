@@ -258,6 +258,41 @@ const APPLICATIONS = [
 ]
 check(await admin.from('applications').upsert(APPLICATIONS, { onConflict: 'profile_id', ignoreDuplicates: true }), 'fichas')
 
+// --- Motos (garaje) ----------------------------------------------------------
+const MOTORCYCLES = [
+  { profile_id: leader, brand: 'Harley-Davidson', model: 'Iron 883', year: 2019, displacement_cc: 883, color: 'Negro', plate: 'KMO01A' },
+  { profile_id: andrea, brand: 'Yamaha', model: 'MT-07', year: 2022, displacement_cc: 689, color: 'Azul', plate: 'KMO02B' },
+  { profile_id: julian, brand: 'Honda', model: 'XR 150', year: 2020, displacement_cc: 149, color: 'Rojo', plate: 'KMO03C' },
+  { profile_id: julian, brand: 'Suzuki', model: 'GN 125', year: 2008, displacement_cc: 124, color: 'Negro', plate: 'KMO04D' },
+]
+for (const moto of MOTORCYCLES) {
+  const found = check(
+    await admin.from('motorcycles').select('id').eq('profile_id', moto.profile_id).eq('model', moto.model).maybeSingle(),
+    `buscar moto ${moto.model}`,
+  )
+  if (!found) check(await admin.from('motorcycles').insert(moto), `crear moto ${moto.model}`)
+}
+
+// --- Punto de encuentro y mapa en eventos ------------------------------------
+check(
+  await admin.from('events').update({ meeting_point: 'Estación de servicio a la salida de la ciudad', map_url: 'https://maps.google.com/?q=4.68,-74.05' }).eq('id', nocturna),
+  'mapa evento nocturna',
+)
+check(
+  await admin.from('events').update({ meeting_point: 'Parque principal, costado norte' }).eq('id', mecanica),
+  'punto de encuentro mecánica',
+)
+
+// --- Anuncios ----------------------------------------------------------------
+const ANNOUNCEMENTS = [
+  { title: 'Bienvenidos al nuevo sitio del club', body: 'Ya puedes ver eventos, confirmar asistencia, dejar comentarios y revisar los convenios. ¡Completa tu garaje con tus motos!', pinned: true, created_by: leader },
+  { title: 'Mantenimiento del punto de encuentro', body: 'La bomba de la 80 estará cerrada el próximo fin de semana; nos vemos en el parque principal.', pinned: false, created_by: leader },
+]
+for (const a of ANNOUNCEMENTS) {
+  const found = check(await admin.from('announcements').select('id').eq('title', a.title).maybeSingle(), `buscar anuncio ${a.title}`)
+  if (!found) check(await admin.from('announcements').insert(a), `crear anuncio ${a.title}`)
+}
+
 console.log('Datos de ejemplo listos.')
 console.log('Cuentas de prueba (la contraseña está en scripts/seed.mjs):')
 for (const a of ACCOUNTS) console.log(`  ${a.email}  →  ${a.role === 'leader' ? 'líder' : a.status === 'pending' ? 'pendiente' : 'miembro'}`)

@@ -23,7 +23,26 @@ export type Database = {
           }
         },"public": {
           Tables: {
-            "applications": {
+            "announcements": {
+                  Row: {
+                    "body": string,"created_at": string,"created_by": string | null,"id": string,"pinned": boolean,"title": string,"updated_at": string
+                  }
+                  Insert: {
+                    "body": string,"created_at"?: string,"created_by"?: string | null,"id"?: string,"pinned"?: boolean,"title": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "body"?: string,"created_at"?: string,"created_by"?: string | null,"id"?: string,"pinned"?: boolean,"title"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "announcements_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"applications": {
                   Row: {
                     "allergies": string,"birth_date": string,"blood_type": Database["public"]['Enums']["blood_type"],"city": string,"emergency_contact_name": string,"emergency_contact_phone": string,"medical_conditions": string,"moto_photo_path": string | null,"occupation": string,"other_club": string,"phone": string,"profile_id": string,"submitted_at": string,"updated_at": string
                   }
@@ -163,13 +182,13 @@ isOneToOne: false
                   ]
                 },"events": {
                   Row: {
-                    "chronicle": string | null,"cover_photo_path": string | null,"created_at": string,"created_by": string | null,"description": string,"id": string,"location": string,"starts_at": string,"title": string
+                    "chronicle": string | null,"cover_photo_path": string | null,"created_at": string,"created_by": string | null,"description": string,"id": string,"location": string,"map_url": string | null,"meeting_point": string,"starts_at": string,"title": string
                   }
                   Insert: {
-                    "chronicle"?: string | null,"cover_photo_path"?: string | null,"created_at"?: string,"created_by"?: string | null,"description"?: string,"id"?: string,"location"?: string,"starts_at": string,"title": string
+                    "chronicle"?: string | null,"cover_photo_path"?: string | null,"created_at"?: string,"created_by"?: string | null,"description"?: string,"id"?: string,"location"?: string,"map_url"?: string | null,"meeting_point"?: string,"starts_at": string,"title": string
                   }
                   Update: {
-                    "chronicle"?: string | null,"cover_photo_path"?: string | null,"created_at"?: string,"created_by"?: string | null,"description"?: string,"id"?: string,"location"?: string,"starts_at"?: string,"title"?: string
+                    "chronicle"?: string | null,"cover_photo_path"?: string | null,"created_at"?: string,"created_by"?: string | null,"description"?: string,"id"?: string,"location"?: string,"map_url"?: string | null,"meeting_point"?: string,"starts_at"?: string,"title"?: string
                   }
                   Relationships: [
                     {
@@ -199,6 +218,25 @@ isOneToOne: false
       referencedColumns: ["id"]
     },{
       foreignKeyName: "featured_riders_profile_id_fkey"
+      columns: ["profile_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"motorcycles": {
+                  Row: {
+                    "brand": string,"color": string,"created_at": string,"displacement_cc": number | null,"id": string,"model": string,"photo_path": string | null,"plate": string,"profile_id": string,"updated_at": string,"year": number | null
+                  }
+                  Insert: {
+                    "brand": string,"color"?: string,"created_at"?: string,"displacement_cc"?: number | null,"id"?: string,"model": string,"photo_path"?: string | null,"plate"?: string,"profile_id"?: string,"updated_at"?: string,"year"?: number | null
+                  }
+                  Update: {
+                    "brand"?: string,"color"?: string,"created_at"?: string,"displacement_cc"?: number | null,"id"?: string,"model"?: string,"photo_path"?: string | null,"plate"?: string,"profile_id"?: string,"updated_at"?: string,"year"?: number | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "motorcycles_profile_id_fkey"
       columns: ["profile_id"]
 isOneToOne: false
       referencedRelation: "profiles"
@@ -282,6 +320,11 @@ isOneToOne: false
                            },
 "is_public_event_photo":
 { Args: { "p_path": string }; Returns: boolean
+                           },
+"member_directory":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "avatar_path": string,"birth_day": number,"birth_month": number,"city": string,"full_name": string,"nickname": string,"occupation": string,"phone": string,"profile_id": string
+            }[]
                            },
 "public_current_featured":
 { Args: Record<PropertyKey, never>; Returns: {

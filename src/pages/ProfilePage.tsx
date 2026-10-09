@@ -96,6 +96,9 @@ function ProfileEditor({ profile }: { profile: Profile }) {
           <Link to="/ficha" className="text-sm font-semibold text-steel underline hover:text-ink">
             Mi ficha (contacto y seguridad)
           </Link>
+          <Link to="/garaje" className="text-sm font-semibold text-steel underline hover:text-ink">
+            Mi garaje (mis motos)
+          </Link>
         </Card>
 
         <Card>

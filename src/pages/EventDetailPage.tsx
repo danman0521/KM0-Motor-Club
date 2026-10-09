@@ -42,6 +42,25 @@ export function EventDetailPage() {
           <span className="first-letter:uppercase">{formatEventDate(e.starts_at)}</span>
           {e.location && <span className="text-muted">· {e.location}</span>}
         </div>
+        {(e.meeting_point || e.map_url) && (
+          <div className="flex flex-wrap items-center gap-3 text-steel">
+            {e.meeting_point && (
+              <span>
+                <span className="text-muted">Punto de encuentro:</span> {e.meeting_point}
+              </span>
+            )}
+            {e.map_url && (
+              <a
+                href={e.map_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 rounded-md border border-line px-3 py-1 text-sm font-semibold hover:border-red hover:text-red-hover"
+              >
+                Ver en el mapa ↗
+              </a>
+            )}
+          </div>
+        )}
       </header>
 
       {e.description && <p className="whitespace-pre-line text-lg text-steel">{e.description}</p>}

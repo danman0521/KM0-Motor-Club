@@ -6,7 +6,10 @@ import { CalendarPage } from './pages/CalendarPage'
 import { EventDetailPage } from './pages/EventDetailPage'
 import { EventsPage } from './pages/EventsPage'
 import { FeaturedPage } from './pages/FeaturedPage'
+import { AnnouncementsPage } from './pages/AnnouncementsPage'
+import { DirectoryPage } from './pages/DirectoryPage'
 import { FichaPage } from './pages/FichaPage'
+import { GaragePage } from './pages/GaragePage'
 import { HomePage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
 import { PartnersPage } from './pages/PartnersPage'
@@ -18,6 +21,7 @@ import { LeaderEventEditPage } from './pages/leader/LeaderEventEditPage'
 import { LeaderEventsPage } from './pages/leader/LeaderEventsPage'
 import { LeaderFeaturedPage } from './pages/leader/LeaderFeaturedPage'
 import { LeaderLayout } from './pages/leader/LeaderLayout'
+import { LeaderAnnouncementsPage } from './pages/leader/LeaderAnnouncementsPage'
 import { LeaderMembersPage } from './pages/leader/LeaderMembersPage'
 import { LeaderPartnersPage } from './pages/leader/LeaderPartnersPage'
 import { LeaderSuggestionsPage } from './pages/leader/LeaderSuggestionsPage'
@@ -42,6 +46,9 @@ export default function App() {
             <Route path="convenios" element={<PartnersPage />} />
             <Route path="perfil" element={<ProfilePage />} />
             <Route path="ficha" element={<FichaPage />} />
+            <Route path="garaje" element={<GaragePage />} />
+            <Route path="directorio" element={<DirectoryPage />} />
+            <Route path="anuncios" element={<AnnouncementsPage />} />
           </Route>
 
           <Route element={<RequireAccess need="leader" />}>
@@ -54,6 +61,7 @@ export default function App() {
               <Route path="destacado" element={<LeaderFeaturedPage />} />
               <Route path="sugerencias" element={<LeaderSuggestionsPage />} />
               <Route path="convenios" element={<LeaderPartnersPage />} />
+            <Route path="anuncios" element={<LeaderAnnouncementsPage />} />
           </Route>
         </Route>
 
