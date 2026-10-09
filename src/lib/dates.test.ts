@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ageFrom, buildMonthGrid, isPast, isSameDay, monthStart, toLocalInputValue } from './dates'
+import { ageFrom, buildMonthGrid, formatDayMonth, isPast, isSameDay, monthStart, toLocalInputValue } from './dates'
 
 describe('buildMonthGrid', () => {
   it('cubre el mes con semanas completas de lunes a domingo', () => {
@@ -74,5 +74,13 @@ describe('ageFrom', () => {
     expect(ageFrom('1990-12-20', now)).toBe(35)
     expect(ageFrom('2010-10-07', now)).toBe(16)
     expect(ageFrom('2010-10-08', now)).toBe(15)
+  })
+})
+
+describe('formatDayMonth', () => {
+  it('formatea día y mes en español, sin año', () => {
+    expect(formatDayMonth(5, 14)).toBe('14 de mayo')
+    expect(formatDayMonth(1, 1)).toBe('1 de enero')
+    expect(formatDayMonth(12, 31)).toBe('31 de diciembre')
   })
 })

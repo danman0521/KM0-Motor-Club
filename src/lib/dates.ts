@@ -76,3 +76,10 @@ export function ageFrom(birthDate: string, now: Date = new Date()): number {
   if (beforeBirthday) age -= 1
   return age
 }
+
+const dayMonthFormat = new Intl.DateTimeFormat('es', { day: 'numeric', month: 'long' })
+
+/** "14 de mayo" a partir de mes (1–12) y día. Para cumpleaños, sin año. */
+export function formatDayMonth(month: number, day: number): string {
+  return dayMonthFormat.format(new Date(2000, month - 1, day))
+}
