@@ -12,6 +12,7 @@ const memberLinks = [
   { to: '/sugerencias', label: 'Sugerencias' },
   { to: '/convenios', label: 'Convenios' },
   { to: '/directorio', label: 'Directorio' },
+  { to: '/anuncios', label: 'Anuncios' },
 ]
 
 export function NavBar() {
