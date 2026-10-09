@@ -4,7 +4,7 @@ import { ButtonLink, Card, EmptyState, ErrorNote, Spinner } from '../components/
 import { site } from '../config/site'
 import { PastEventShowcase } from '../features/events/PastEventShowcase'
 import { FeaturedCard } from '../features/featured/FeaturedCard'
-import { featuredPhotoUrl, usePublicHome } from '../features/featured/api'
+import { featuredDisplayPhoto, usePublicHome } from '../features/featured/api'
 import { formatEventDate } from '../lib/dates'
 
 export function HomePage() {
@@ -103,7 +103,7 @@ export function HomePage() {
                 name={home.data.featured.display_name}
                 reason={home.data.featured.reason}
                 month={home.data.featured.month}
-                photoUrl={featuredPhotoUrl(home.data.featured.photo_path)}
+                photoUrl={featuredDisplayPhoto(home.data.featured.photo_path, home.data.featured.avatar_path)}
               />
             ) : (
               <EmptyState>Aún no se ha elegido al motero destacado de este mes.</EmptyState>

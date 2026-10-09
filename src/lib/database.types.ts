@@ -328,7 +328,7 @@ isOneToOne: false
                            },
 "public_current_featured":
 { Args: Record<PropertyKey, never>; Returns: {
-              "display_name": string,"month": string,"photo_path": string,"reason": string
+              "avatar_path": string,"display_name": string,"month": string,"photo_path": string,"reason": string
             }[]
                            },
 "public_past_events":

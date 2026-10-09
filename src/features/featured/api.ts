@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { compressPhoto } from '../../lib/images'
 import { supabase } from '../../lib/supabase'
+import { avatarUrl } from '../profile/api'
 
 const BUCKET = 'featured'
 
@@ -9,13 +10,24 @@ export function featuredPhotoUrl(path: string | null | undefined): string | unde
   return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl
 }
 
+/**
+ * Foto a mostrar para el destacado: la foto específica del destacado si existe;
+ * si no, la foto de perfil del motero.
+ */
+export function featuredDisplayPhoto(
+  photoPath: string | null | undefined,
+  avatarPath: string | null | undefined,
+): string | undefined {
+  return featuredPhotoUrl(photoPath) ?? avatarUrl(avatarPath)
+}
+
 export function useFeaturedRiders() {
   return useQuery({
     queryKey: ['featured'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('featured_riders')
-        .select('*, profile:profiles!featured_riders_profile_id_fkey(id, full_name, nickname)')
+        .select('*, profile:profiles!featured_riders_profile_id_fkey(id, full_name, nickname, avatar_path)')
         .order('month', { ascending: false })
       if (error) throw error
       return data
