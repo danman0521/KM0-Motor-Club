@@ -33,12 +33,23 @@ export function LeaderMembersPage() {
   const applications = useApplicationIds()
   // Miembro cuya ficha se está viendo en el diálogo
   const [viewing, setViewing] = useState<Profile | null>(null)
+  // Búsqueda y filtro de la lista de miembros aprobados
+  const [query, setQuery] = useState('')
+  const [onlyNoFicha, setOnlyNoFicha] = useState(false)
 
-  const fichaButton = (m: Profile) => (
-    <Button variant="ghost" onClick={() => setViewing(m)}>
-      {applications.data?.has(m.id) ? 'Ver ficha' : 'Sin ficha'}
-    </Button>
-  )
+  const hasFicha = (m: Profile) => applications.data?.has(m.id) ?? false
+
+  // Insignia de color del estado de la ficha
+  const fichaBadge = (m: Profile) =>
+    hasFicha(m) ? <Badge tone="green">Con ficha</Badge> : <Badge tone="red">Sin ficha</Badge>
+
+  // Botón para abrir la ficha; solo si existe
+  const fichaButton = (m: Profile) =>
+    hasFicha(m) ? (
+      <Button variant="ghost" onClick={() => setViewing(m)}>
+        Ver ficha
+      </Button>
+    ) : null
 
   async function run(action: () => Promise<unknown>) {
     setActionError('')
@@ -57,6 +68,20 @@ export function LeaderMembersPage() {
   const rejected = members.data.filter((m) => m.status === 'rejected')
   const busy = setStatus.isPending || setRole.isPending
 
+  // Lista de miembros aprobados tras aplicar la búsqueda y el filtro de ficha.
+  // Se ignoran mayúsculas y tildes para que «julian» encuentre a «Julián».
+  const fold = (s: string) =>
+    s
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+  const term = fold(query.trim())
+  const visibleApproved = approved.filter((m) => {
+    if (onlyNoFicha && hasFicha(m)) return false
+    if (!term) return true
+    return fold(`${m.full_name} ${m.nickname ?? ''}`).includes(term)
+  })
+
   return (
     <div className="space-y-10">
       {actionError && <ErrorNote message={actionError} />}
@@ -70,7 +95,10 @@ export function LeaderMembersPage() {
             {pending.map((m) => (
               <li key={m.id}>
                 <Card className="flex flex-wrap items-center justify-between gap-3">
-                  <MemberName member={m} />
+                  <div className="flex flex-wrap items-center gap-3">
+                    <MemberName member={m} />
+                    {fichaBadge(m)}
+                  </div>
                   <div className="flex flex-wrap gap-2">
                     {fichaButton(m)}
                     <Button disabled={busy} onClick={() => run(() => setStatus.mutateAsync({ id: m.id, status: 'approved' }))}>
@@ -88,15 +116,34 @@ export function LeaderMembersPage() {
       </section>
 
       <section>
-        <h2 className="mb-3 text-2xl font-bold">Miembros ({approved.length})</h2>
-        <ul className="space-y-3">
-          {approved.map((m) => {
-            const isMe = m.id === me?.id
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-2xl font-bold">Miembros ({approved.length})</h2>
+          <div className="flex flex-wrap items-center gap-3">
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Buscar por nombre o apodo…"
+              className="w-56 rounded-md border border-line bg-surface-2 px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-red focus:outline-none"
+            />
+            <label className="flex items-center gap-2 text-sm text-steel">
+              <input type="checkbox" checked={onlyNoFicha} onChange={(e) => setOnlyNoFicha(e.target.checked)} className="accent-red" />
+              Solo sin ficha
+            </label>
+          </div>
+        </div>
+        {visibleApproved.length === 0 ? (
+          <EmptyState>Ningún motero coincide con la búsqueda.</EmptyState>
+        ) : (
+          <ul className="space-y-3">
+            {visibleApproved.map((m) => {
+              const isMe = m.id === me?.id
             return (
               <li key={m.id}>
                 <Card className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex flex-wrap items-center gap-3">
                     <MemberName member={m} />
+                    {fichaBadge(m)}
                     {m.role === 'leader' && <Badge tone="red">Líder</Badge>}
                     {isMe && <Badge>Tú</Badge>}
                   </div>
@@ -130,8 +177,9 @@ export function LeaderMembersPage() {
                 </Card>
               </li>
             )
-          })}
-        </ul>
+            })}
+          </ul>
+        )}
       </section>
 
       {viewing && (
