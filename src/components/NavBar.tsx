@@ -11,6 +11,7 @@ const memberLinks = [
   { to: '/destacado', label: 'Destacado' },
   { to: '/sugerencias', label: 'Sugerencias' },
   { to: '/convenios', label: 'Convenios' },
+  { to: '/directorio', label: 'Directorio' },
 ]
 
 export function NavBar() {

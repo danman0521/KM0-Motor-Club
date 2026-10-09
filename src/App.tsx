@@ -6,6 +6,7 @@ import { CalendarPage } from './pages/CalendarPage'
 import { EventDetailPage } from './pages/EventDetailPage'
 import { EventsPage } from './pages/EventsPage'
 import { FeaturedPage } from './pages/FeaturedPage'
+import { DirectoryPage } from './pages/DirectoryPage'
 import { FichaPage } from './pages/FichaPage'
 import { GaragePage } from './pages/GaragePage'
 import { HomePage } from './pages/HomePage'
@@ -44,6 +45,7 @@ export default function App() {
             <Route path="perfil" element={<ProfilePage />} />
             <Route path="ficha" element={<FichaPage />} />
             <Route path="garaje" element={<GaragePage />} />
+            <Route path="directorio" element={<DirectoryPage />} />
           </Route>
 
           <Route element={<RequireAccess need="leader" />}>
