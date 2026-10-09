@@ -7,6 +7,7 @@ import { EventDetailPage } from './pages/EventDetailPage'
 import { EventsPage } from './pages/EventsPage'
 import { FeaturedPage } from './pages/FeaturedPage'
 import { FichaPage } from './pages/FichaPage'
+import { GaragePage } from './pages/GaragePage'
 import { HomePage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
 import { PartnersPage } from './pages/PartnersPage'
@@ -42,6 +43,7 @@ export default function App() {
             <Route path="convenios" element={<PartnersPage />} />
             <Route path="perfil" element={<ProfilePage />} />
             <Route path="ficha" element={<FichaPage />} />
+            <Route path="garaje" element={<GaragePage />} />
           </Route>
 
           <Route element={<RequireAccess need="leader" />}>

@@ -2,6 +2,8 @@ import { Avatar } from '../../components/Avatar'
 import { Badge, EmptyState, ErrorNote, Spinner } from '../../components/ui'
 import { ageFrom, formatDay, formatDayOf } from '../../lib/dates'
 import type { Profile } from '../../lib/supabase'
+import { MotorcycleCard } from '../motorcycles/MotorcycleCard'
+import { useMotorcycles } from '../motorcycles/api'
 import { useApplication, useMotoPhotoUrl } from './api'
 
 function Row({ label, value }: { label: string; value: string }) {
@@ -17,6 +19,7 @@ function Row({ label, value }: { label: string; value: string }) {
 export function ApplicationDetails({ profile }: { profile: Profile }) {
   const application = useApplication(profile.id)
   const motoPhoto = useMotoPhotoUrl(application.data?.moto_photo_path)
+  const motos = useMotorcycles(profile.id)
 
   if (application.isPending) return <Spinner label="Cargando ficha…" />
   if (application.isError) return <ErrorNote message="No se pudo cargar la ficha." onRetry={() => application.refetch()} />
@@ -56,11 +59,26 @@ export function ApplicationDetails({ profile }: { profile: Profile }) {
       </div>
 
       <div>
-        <h3 className="mb-2 text-lg font-bold">Su moto</h3>
-        {!a.moto_photo_path && <p className="text-sm text-muted">Sin foto de la moto.</p>}
-        {a.moto_photo_path && motoPhoto.isPending && <Spinner label="Cargando foto…" />}
-        {motoPhoto.data && (
-          <img src={motoPhoto.data} alt={`Moto de ${profile.full_name}`} className="max-h-80 rounded-md border border-surface-2 object-contain" />
+        <h3 className="mb-2 text-lg font-bold">Su garaje</h3>
+        {motos.isPending && <Spinner label="Cargando motos…" />}
+        {motos.isSuccess && motos.data.length === 0 && !a.moto_photo_path && (
+          <p className="text-sm text-muted">No ha registrado motos.</p>
+        )}
+        {motos.isSuccess && motos.data.length > 0 && (
+          <div className="grid gap-3 sm:grid-cols-2">
+            {motos.data.map((moto) => (
+              <MotorcycleCard key={moto.id} moto={moto} />
+            ))}
+          </div>
+        )}
+        {a.moto_photo_path && (
+          <div className="mt-3">
+            <p className="mb-1 text-sm text-muted">Foto de la moto que subió al postularse:</p>
+            {motoPhoto.isPending && <Spinner label="Cargando foto…" />}
+            {motoPhoto.data && (
+              <img src={motoPhoto.data} alt={`Moto de ${profile.full_name}`} className="max-h-80 rounded-md border border-surface-2 object-contain" />
+            )}
+          </div>
         )}
       </div>
     </div>
