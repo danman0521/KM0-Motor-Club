@@ -126,6 +126,25 @@ describe('visitante sin sesión', () => {
     expect(error).toBeNull()
   })
 
+  it('el destacado del mes incluye la foto de perfil del motero', async () => {
+    // El líder es el destacado de este mes y tiene avatar pero no foto de destacado
+    const monthStart = new Date()
+    monthStart.setUTCDate(1)
+    const month = monthStart.toISOString().slice(0, 10)
+    await admin.from('profiles').update({ avatar_path: `${leader.id}/avatar.jpg` }).eq('id', leader.id)
+    const up = await admin
+      .from('featured_riders')
+      .upsert({ month, profile_id: leader.id, reason: 'Por su liderazgo', photo_path: null }, { onConflict: 'month' })
+    expect(up.error).toBeNull()
+
+    const { data, error } = await anon.rpc('public_current_featured')
+    expect(error).toBeNull()
+    const row = (data as { avatar_path: string | null; photo_path: string | null }[])[0]
+    expect(row).toBeTruthy()
+    expect(row.avatar_path).toBe(`${leader.id}/avatar.jpg`)
+    expect(row.photo_path).toBeNull()
+  })
+
   it('no puede aprobar sugerencias', async () => {
     const { error } = await anon.rpc('create_event_from_suggestion', {
       p_suggestion: suggestionId,

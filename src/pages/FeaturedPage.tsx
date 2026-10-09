@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { EmptyState, ErrorNote, PageTitle, Spinner } from '../components/ui'
 import { FeaturedCard } from '../features/featured/FeaturedCard'
-import { featuredPhotoUrl, useFeaturedRiders } from '../features/featured/api'
+import { featuredDisplayPhoto, useFeaturedRiders } from '../features/featured/api'
 import { monthStart } from '../lib/dates'
 import { displayName } from '../lib/supabase'
 
@@ -25,7 +25,7 @@ export function FeaturedPage() {
                 name={displayName(current.profile)}
                 reason={current.reason}
                 month={current.month}
-                photoUrl={featuredPhotoUrl(current.photo_path)}
+                photoUrl={featuredDisplayPhoto(current.photo_path, current.profile?.avatar_path)}
               />
             ) : (
               <EmptyState>Aún no se ha elegido al motero destacado de este mes.</EmptyState>
@@ -44,7 +44,7 @@ export function FeaturedPage() {
                     name={displayName(f.profile)}
                     reason={f.reason}
                     month={f.month}
-                    photoUrl={featuredPhotoUrl(f.photo_path)}
+                    photoUrl={featuredDisplayPhoto(f.photo_path, f.profile?.avatar_path)}
                   />
                 ))}
               </div>
