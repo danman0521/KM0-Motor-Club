@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Badge } from '../../components/ui'
+import { Badge, FadeImg } from '../../components/ui'
 import { formatDay } from '../../lib/dates'
 import { partnerLogoUrl, type Partner } from './api'
 
@@ -16,10 +16,10 @@ export function PartnerCard({
 }) {
   const logo = partnerLogoUrl(partner.logo_path)
   return (
-    <article className="flex h-full flex-col gap-3 rounded-lg border border-surface-2 bg-surface p-4">
+    <article className="flex h-full flex-col gap-3 rounded-lg border border-surface-2 bg-surface p-4 transition-[border-color,transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:border-line hover:shadow-[0_14px_34px_-18px_rgba(0,0,0,0.85)] motion-reduce:transform-none">
       <div className="flex items-center gap-3">
         {logo ? (
-          <img src={logo} alt={`Logo de ${partner.name}`} loading="lazy" className="h-14 w-14 shrink-0 rounded-md bg-ink object-contain" />
+          <FadeImg src={logo} alt={`Logo de ${partner.name}`} loading="lazy" className="h-14 w-14 shrink-0 rounded-md bg-ink object-contain" />
         ) : (
           <span aria-hidden className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-md bg-gunmetal font-display text-2xl font-bold text-steel">
             {partner.name.charAt(0).toUpperCase()}

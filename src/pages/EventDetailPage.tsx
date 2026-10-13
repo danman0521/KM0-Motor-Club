@@ -6,6 +6,7 @@ import { CommentsSection } from '../features/events/CommentsSection'
 import { PhotoGallery } from '../features/events/PhotoGallery'
 import { RatingSection } from '../features/events/RatingSection'
 import { useEvent, useEventPhotos, useEventVideos } from '../features/events/api'
+import { WeatherForecast } from '../features/weather/WeatherForecast'
 import { formatEventDate, isPast } from '../lib/dates'
 import { youTubeEmbedUrl } from '../lib/youtube'
 
@@ -61,6 +62,7 @@ export function EventDetailPage() {
             )}
           </div>
         )}
+        {!past && e.location && <WeatherForecast location={e.location} startsAt={e.starts_at} />}
       </header>
 
       {e.description && <p className="whitespace-pre-line text-lg text-steel">{e.description}</p>}

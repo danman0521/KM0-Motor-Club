@@ -1,6 +1,6 @@
 import { useAuth } from '../auth/AuthProvider'
 import { SocialLinks } from '../components/SocialLinks'
-import { ButtonLink, Card, EmptyState, ErrorNote, Spinner } from '../components/ui'
+import { ButtonLink, Card, EmptyState, ErrorNote, SkeletonCards } from '../components/ui'
 import { site } from '../config/site'
 import { PastEventShowcase } from '../features/events/PastEventShowcase'
 import { FeaturedCard } from '../features/featured/FeaturedCard'
@@ -13,7 +13,7 @@ export function HomePage() {
 
   return (
     <div className="space-y-14">
-      <section className="flex flex-col items-center gap-6 text-center md:flex-row md:text-left">
+      <section className="flex animate-fade-in-up flex-col items-center gap-6 text-center md:flex-row md:text-left">
         <img src={site.logo} alt={`Logo de ${site.name}`} className="h-56 w-56 rounded-full md:h-72 md:w-72" />
         <div className="space-y-4">
           <h1 className="text-6xl font-bold text-red-hover md:text-7xl">{site.name}</h1>
@@ -40,7 +40,7 @@ export function HomePage() {
         </div>
       </section>
 
-      {home.isPending && <Spinner />}
+      {home.isPending && <SkeletonCards />}
       {home.isError && <ErrorNote message="No se pudo cargar la información del grupo." onRetry={() => home.refetch()} />}
 
       {home.isSuccess && (
@@ -50,7 +50,7 @@ export function HomePage() {
             {home.data.upcoming.length === 0 ? (
               <EmptyState>No hay eventos programados por ahora.</EmptyState>
             ) : (
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="stagger grid gap-4 md:grid-cols-3">
                 {home.data.upcoming.map((e) => (
                   <Card key={`${e.title}-${e.starts_at}`} className="space-y-1 border-l-4 border-l-red">
                     <h3 className="text-xl font-bold">{e.title}</h3>
@@ -75,7 +75,7 @@ export function HomePage() {
               <EmptyState>Aún no hay eventos realizados.</EmptyState>
             ) : (
               <>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="stagger grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {home.data.past.map((e) => (
                     <PastEventShowcase
                       key={`${e.title}-${e.starts_at}`}

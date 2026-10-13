@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Avatar } from '../components/Avatar'
-import { Card, EmptyState, ErrorNote, PageTitle, Spinner } from '../components/ui'
+import { Card, EmptyState, ErrorNote, PageTitle, SkeletonCards } from '../components/ui'
 import { useDirectory, whatsappLink, type DirectoryMember } from '../features/directory/api'
 import { formatDayMonth } from '../lib/dates'
 
@@ -20,7 +20,7 @@ export function DirectoryPage() {
   return (
     <>
       <PageTitle>Directorio</PageTitle>
-      {directory.isPending && <Spinner />}
+      {directory.isPending && <SkeletonCards />}
       {directory.isError && <ErrorNote message="No se pudo cargar el directorio." onRetry={() => directory.refetch()} />}
 
       {directory.isSuccess && (
@@ -46,11 +46,11 @@ export function DirectoryPage() {
 
           <section>
             <h2 className="mb-3 text-2xl font-bold">Miembros ({members.length})</h2>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="stagger grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {members.map((m) => {
                 const wa = whatsappLink(m.phone)
                 return (
-                  <Card key={m.profile_id} className="space-y-3">
+                  <Card key={m.profile_id} hover className="space-y-3">
                     <div className="flex items-center gap-3">
                       <Avatar profile={{ full_name: m.full_name, avatar_path: m.avatar_path }} size="lg" />
                       <div className="min-w-0">

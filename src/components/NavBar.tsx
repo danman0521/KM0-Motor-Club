@@ -30,9 +30,10 @@ export function NavBar() {
   ]
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
-    `block rounded-md px-3 py-2 font-display text-sm uppercase tracking-wide transition-colors ${
-      isActive ? 'bg-red text-ink' : 'text-steel hover:bg-surface-2 hover:text-ink'
-    }`
+    'relative block rounded-md px-3 py-2 font-display text-sm uppercase tracking-wide transition-colors ' +
+    'after:pointer-events-none after:absolute after:bottom-1 after:left-3 after:right-3 after:h-0.5 after:origin-left ' +
+    'after:rounded-full after:bg-red after:transition-transform after:duration-300 after:ease-out motion-reduce:after:transition-none ' +
+    (isActive ? 'text-ink after:scale-x-100' : 'text-steel hover:text-ink after:scale-x-0 hover:after:scale-x-100')
 
   async function handleSignOut() {
     setOpen(false)
@@ -107,7 +108,7 @@ export function NavBar() {
       </div>
 
       {open && (
-        <nav aria-label="Principal móvil" className="flex flex-col gap-1 border-t border-surface-2 px-4 py-3 lg:hidden">
+        <nav aria-label="Principal móvil" className="flex animate-fade-in-up flex-col gap-1 border-t border-surface-2 px-4 py-3 lg:hidden">
           {links.map((l) => (
             <NavLink key={l.to} to={l.to} className={linkClass} onClick={() => setOpen(false)}>
               {l.label}
