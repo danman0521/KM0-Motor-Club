@@ -1,4 +1,5 @@
 import { avatarUrl } from '../features/profile/api'
+import { FadeImg } from './ui'
 
 const sizes = { sm: 'h-8 w-8 text-xs', md: 'h-10 w-10 text-sm', lg: 'h-28 w-28 text-3xl' } as const
 
@@ -17,7 +18,7 @@ export function Avatar({
 }) {
   const url = avatarUrl(profile?.avatar_path)
   const base = `${sizes[size]} shrink-0 rounded-full`
-  if (url) return <img src={url} alt="" loading="lazy" className={`${base} object-cover`} />
+  if (url) return <FadeImg src={url} alt="" loading="lazy" className={`${base} object-cover`} />
   return (
     <span aria-hidden className={`${base} inline-flex items-center justify-center bg-gunmetal font-display font-semibold text-steel`}>
       {initials(profile?.full_name ?? '')}

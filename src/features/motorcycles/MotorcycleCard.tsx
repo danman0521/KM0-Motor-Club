@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { FadeImg } from '../../components/ui'
 import { site } from '../../config/site'
 import { motorcyclePhotoUrl, type Motorcycle } from './api'
 
@@ -7,10 +8,10 @@ export function MotorcycleCard({ moto, actions }: { moto: Motorcycle; actions?: 
   const photo = motorcyclePhotoUrl(moto.photo_path)
   const specs = [moto.year, moto.displacement_cc ? `${moto.displacement_cc} cc` : null, moto.color || null].filter(Boolean)
   return (
-    <article className="flex flex-col overflow-hidden rounded-lg border border-surface-2 bg-surface">
+    <article className="group flex flex-col overflow-hidden rounded-lg border border-surface-2 bg-surface transition-[border-color,transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:border-line hover:shadow-[0_14px_34px_-18px_rgba(0,0,0,0.85)] motion-reduce:transform-none">
       <div className="flex aspect-video items-center justify-center overflow-hidden bg-gunmetal-dark">
         {photo ? (
-          <img src={photo} alt={`${moto.brand} ${moto.model}`} loading="lazy" className="h-full w-full object-cover" />
+          <FadeImg src={photo} alt={`${moto.brand} ${moto.model}`} loading="lazy" className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105 motion-reduce:transform-none" />
         ) : (
           <img src={site.logo} alt="" className="h-16 w-16 opacity-40" />
         )}

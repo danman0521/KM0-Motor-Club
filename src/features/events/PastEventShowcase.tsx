@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { FadeImg } from '../../components/ui'
 import { site } from '../../config/site'
 import { formatEventDate } from '../../lib/dates'
 
@@ -19,7 +20,7 @@ export function PastEventShowcase({ title, startsAt, location, photoUrls }: Prop
     <article className="overflow-hidden rounded-lg border border-surface-2 bg-surface">
       <div className="flex aspect-video items-center justify-center overflow-hidden bg-gunmetal-dark">
         {main ? (
-          <img src={main} alt={`Foto de ${title}`} loading="lazy" className="h-full w-full object-cover" />
+          <FadeImg key={main} src={main} alt={`Foto de ${title}`} loading="lazy" className="h-full w-full object-cover" />
         ) : (
           <img src={site.logo} alt="" className="h-24 w-24 opacity-40" />
         )}
@@ -38,7 +39,7 @@ export function PastEventShowcase({ title, startsAt, location, photoUrls }: Prop
                   i === active ? 'border-red' : 'border-transparent hover:border-line'
                 }`}
               >
-                <img src={url} alt="" loading="lazy" className="h-full w-full object-cover" />
+                <FadeImg src={url} alt="" loading="lazy" className="h-full w-full object-cover" />
               </button>
             </li>
           ))}

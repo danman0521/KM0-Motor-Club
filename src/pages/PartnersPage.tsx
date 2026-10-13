@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { EmptyState, ErrorNote, PageTitle, Spinner } from '../components/ui'
+import { EmptyState, ErrorNote, PageTitle, SkeletonCards } from '../components/ui'
 import { site } from '../config/site'
 import { PartnerCard } from '../features/partners/PartnerCard'
 import { usePartners, type Partner } from '../features/partners/api'
@@ -29,7 +29,7 @@ export function PartnersPage() {
       <p className="mb-6 max-w-2xl text-steel">
         Empresas aliadas con beneficios para los miembros de {site.name}. Identifícate como miembro del grupo para hacerlos válidos.
       </p>
-      {partners.isPending && <Spinner />}
+      {partners.isPending && <SkeletonCards />}
       {partners.isError && <ErrorNote message="No se pudieron cargar los convenios." onRetry={() => partners.refetch()} />}
       {partners.isSuccess && visible.length === 0 && <EmptyState>Aún no hay convenios vigentes.</EmptyState>}
 
@@ -37,7 +37,7 @@ export function PartnersPage() {
         {sorted.map(([category, items]) => (
           <section key={category}>
             <h2 className="mb-3 text-2xl font-bold">{category}</h2>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="stagger grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {items.map((partner) => (
                 <PartnerCard key={partner.id} partner={partner} showCategory={false} />
               ))}
