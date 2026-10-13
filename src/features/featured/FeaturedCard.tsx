@@ -1,4 +1,4 @@
-import { Badge } from '../../components/ui'
+import { Badge, FadeImg } from '../../components/ui'
 import { site } from '../../config/site'
 import { formatMonth } from '../../lib/dates'
 
@@ -19,7 +19,7 @@ export function FeaturedCard({ name, reason, month, photoUrl, size = 'compact' }
     >
       <div className={`flex items-center justify-center bg-gunmetal-dark ${hero ? 'aspect-square md:w-80 md:shrink-0' : 'aspect-square'}`}>
         {photoUrl ? (
-          <img src={photoUrl} alt={`Foto de ${name}`} loading="lazy" className="h-full w-full object-cover" />
+          <FadeImg src={photoUrl} alt={`Foto de ${name}`} loading="lazy" className="h-full w-full object-cover" />
         ) : (
           <img src={site.logo} alt="" className="h-24 w-24 opacity-40" />
         )}

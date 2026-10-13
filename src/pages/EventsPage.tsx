@@ -1,4 +1,4 @@
-import { ErrorNote, EmptyState, PageTitle, Spinner } from '../components/ui'
+import { ErrorNote, EmptyState, PageTitle, SkeletonCards } from '../components/ui'
 import { EventCard } from '../features/events/EventCard'
 import { useEvents, useSignedUrls } from '../features/events/api'
 import { useRatingSummaries } from '../features/events/community'
@@ -13,10 +13,10 @@ export function EventsPage() {
   return (
     <>
       <PageTitle>Eventos realizados</PageTitle>
-      {events.isPending && <Spinner />}
+      {events.isPending && <SkeletonCards />}
       {events.isError && <ErrorNote message="No se pudieron cargar los eventos." onRetry={() => events.refetch()} />}
       {events.isSuccess && past.length === 0 && <EmptyState>Aún no hay eventos realizados.</EmptyState>}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="stagger grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {past.map((event) => (
           <EventCard
             key={event.id}

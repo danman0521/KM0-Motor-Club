@@ -1,4 +1,4 @@
-import { Badge, Card, EmptyState, ErrorNote, PageTitle, Spinner } from '../components/ui'
+import { Badge, Card, EmptyState, ErrorNote, PageTitle, SkeletonList } from '../components/ui'
 import { useAnnouncements } from '../features/announcements/api'
 import { formatEventDate } from '../lib/dates'
 
@@ -8,11 +8,11 @@ export function AnnouncementsPage() {
   return (
     <>
       <PageTitle>Anuncios</PageTitle>
-      {announcements.isPending && <Spinner />}
+      {announcements.isPending && <SkeletonList rows={3} />}
       {announcements.isError && <ErrorNote message="No se pudieron cargar los anuncios." onRetry={() => announcements.refetch()} />}
       {announcements.isSuccess && announcements.data.length === 0 && <EmptyState>No hay anuncios por ahora.</EmptyState>}
 
-      <ul className="space-y-4">
+      <ul className="stagger space-y-4">
         {announcements.data?.map((a) => (
           <li key={a.id}>
             <Card className={`space-y-2 ${a.pinned ? 'border-l-4 border-l-red' : ''}`}>

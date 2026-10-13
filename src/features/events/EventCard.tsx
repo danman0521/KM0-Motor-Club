@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { FadeImg } from '../../components/ui'
 import { site } from '../../config/site'
 import { formatEventDate } from '../../lib/dates'
 import type { EventRow } from '../../lib/supabase'
@@ -17,11 +18,11 @@ export function EventCard({
   return (
     <Link
       to={`/eventos/${event.id}`}
-      className="group block overflow-hidden rounded-lg border border-surface-2 bg-surface transition-colors hover:border-red"
+      className="group block overflow-hidden rounded-lg border border-surface-2 bg-surface transition-[border-color,transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:border-red hover:shadow-[0_14px_34px_-18px_rgba(0,0,0,0.85)] motion-reduce:transform-none"
     >
       <div className="flex aspect-video items-center justify-center overflow-hidden bg-gunmetal-dark">
         {coverUrl ? (
-          <img src={coverUrl} alt="" loading="lazy" className="h-full w-full object-cover transition-transform group-hover:scale-105" />
+          <FadeImg src={coverUrl} alt="" loading="lazy" className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105 motion-reduce:transform-none" />
         ) : (
           <img src={site.logo} alt="" className="h-24 w-24 opacity-40" />
         )}

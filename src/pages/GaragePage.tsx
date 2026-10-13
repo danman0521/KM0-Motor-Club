@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
-import { Button, Card, EmptyState, ErrorNote, Modal, PageTitle, Spinner } from '../components/ui'
+import { Button, Card, EmptyState, ErrorNote, Modal, PageTitle, SkeletonCards } from '../components/ui'
 import { MotorcycleCard } from '../features/motorcycles/MotorcycleCard'
 import { MotorcycleForm } from '../features/motorcycles/MotorcycleForm'
 import { useDeleteMotorcycle, useMotorcycles, useSaveMotorcycle, type Motorcycle } from '../features/motorcycles/api'
@@ -44,11 +44,11 @@ export function GaragePage() {
       </div>
 
       {actionError && <ErrorNote message={actionError} />}
-      {motos.isPending && <Spinner />}
+      {motos.isPending && <SkeletonCards count={3} />}
       {motos.isError && <ErrorNote message="No se pudieron cargar tus motos." onRetry={() => motos.refetch()} />}
       {motos.isSuccess && motos.data.length === 0 && <EmptyState>Aún no has añadido ninguna moto.</EmptyState>}
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="stagger grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {motos.data?.map((moto) => (
           <MotorcycleCard
             key={moto.id}

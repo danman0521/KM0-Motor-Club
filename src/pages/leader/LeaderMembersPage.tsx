@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../../auth/AuthProvider'
 import { Avatar } from '../../components/Avatar'
-import { Badge, Button, Card, EmptyState, ErrorNote, Modal, Spinner } from '../../components/ui'
+import { Badge, Button, Card, EmptyState, ErrorNote, Modal, SkeletonList } from '../../components/ui'
 import { ApplicationDetails } from '../../features/applications/ApplicationDetails'
 import { useApplicationIds } from '../../features/applications/api'
 import { useMembers, useSetMemberRole, useSetMemberStatus } from '../../features/members/api'
@@ -60,7 +60,7 @@ export function LeaderMembersPage() {
     }
   }
 
-  if (members.isPending) return <Spinner />
+  if (members.isPending) return <SkeletonList rows={5} />
   if (members.isError) return <ErrorNote message="No se pudieron cargar los miembros." onRetry={() => members.refetch()} />
 
   const pending = members.data.filter((m) => m.status === 'pending')
