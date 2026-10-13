@@ -214,9 +214,9 @@ describe('mapa del evento', () => {
 })
 
 describe('eliminar miembro', () => {
-  it('un líder elimina a un miembro y borra en cascada sus datos y archivos', async () => {
+  it('un líder elimina a un miembro y borra en cascada su perfil y datos', async () => {
     const victim = await createActor('victima', { status: 'approved' })
-    // Datos personales: ficha, moto y archivos en su carpeta
+    // Datos personales: ficha y moto
     await admin.from('applications').insert({
       profile_id: victim.id,
       city: 'Cali',
@@ -231,7 +231,6 @@ describe('eliminar miembro', () => {
       .insert({ profile_id: victim.id, brand: 'KTM', model: 'Duke 390' })
       .select('id')
       .single()
-    await admin.storage.from('avatars').upload(`${victim.id}/avatar.png`, png, { contentType: 'image/png' })
 
     const del = await leader.client.rpc('delete_member', { target: victim.id })
     expect(del.error).toBeNull()
@@ -243,9 +242,6 @@ describe('eliminar miembro', () => {
     expect((await admin.from('profiles').select('id').eq('id', victim.id)).data).toEqual([])
     expect((await admin.from('applications').select('profile_id').eq('profile_id', victim.id)).data).toEqual([])
     expect((await admin.from('motorcycles').select('id').eq('id', moto!.id)).data).toEqual([])
-    // Sus archivos también
-    const files = await admin.storage.from('avatars').list(victim.id)
-    expect(files.data ?? []).toEqual([])
   })
 
   it('un miembro no puede eliminar a otro', async () => {

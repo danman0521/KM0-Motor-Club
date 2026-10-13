@@ -309,6 +309,9 @@ isOneToOne: false
             "create_event_from_suggestion":
 { Args: { "p_description": string,"p_location": string,"p_starts_at": string,"p_suggestion": string,"p_title": string }; Returns: string
                            },
+"delete_member":
+{ Args: { "target": string }; Returns: undefined
+                           },
 "event_has_started":
 { Args: { "p_event": string }; Returns: boolean
                            },

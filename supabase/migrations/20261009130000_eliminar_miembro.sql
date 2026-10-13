@@ -1,10 +1,15 @@
 -- Eliminación total de un miembro. Borrar su cuenta de autenticación elimina en
 -- cascada su perfil y todos sus datos personales (ficha, motos, asistencias,
--- calificaciones, comentarios, sugerencias) y sus archivos. El contenido del
--- club que creó (eventos, anuncios, convenios, destacados, fotos) se conserva
--- con el autor en nulo, tal como lo definen las claves foráneas.
+-- calificaciones, comentarios, sugerencias). El contenido del club que creó
+-- (eventos, anuncios, convenios, destacados, fotos) se conserva con el autor en
+-- nulo, tal como lo definen las claves foráneas.
 --
 -- Solo un líder puede ejecutarla y nunca sobre su propia cuenta.
+--
+-- Los archivos del usuario (avatar, fotos de motos, foto de la ficha) se borran
+-- desde el cliente con la Storage API: Supabase bloquea el borrado directo de
+-- storage.objects, y las políticas de los buckets ya permiten que un líder
+-- elimine esos archivos.
 
 create function public.delete_member(target uuid)
 returns void
@@ -22,11 +27,6 @@ begin
   if not exists (select 1 from public.profiles where id = target) then
     raise exception 'El miembro no existe.';
   end if;
-
-  -- Archivos propios del usuario: su carpeta dentro de cada bucket
-  delete from storage.objects
-  where bucket_id in ('avatars', 'motorcycles', 'applications')
-    and (storage.foldername(name))[1] = target::text;
 
   -- Borrar la cuenta de auth elimina en cascada el perfil y sus datos personales
   delete from auth.users where id = target;
