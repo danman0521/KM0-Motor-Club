@@ -91,7 +91,12 @@ export function ApplicationForm({ initial, hasRiderPhoto = false, hasMotoPhoto =
       if (riderInput.current) riderInput.current.value = ''
       if (motoInput.current) motoInput.current.value = ''
     } catch (err) {
-      setFormError(friendlyError(err))
+      // Diagnóstico: el error real queda en la consola y, si es desconocido,
+      // se muestra su detalle técnico para poder reportarlo.
+      console.error('[KMO] Error al guardar la ficha:', err)
+      const message = friendlyError(err)
+      const detail = (err as { code?: string; message?: string })?.code ?? (err as { message?: string })?.message
+      setFormError(message === 'Algo salió mal. Intenta de nuevo.' && detail ? `${message} (detalle: ${detail})` : message)
     } finally {
       setBusy(false)
     }
