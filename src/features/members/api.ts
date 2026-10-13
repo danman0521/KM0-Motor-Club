@@ -34,3 +34,19 @@ export function useSetMemberRole() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['members'] }),
   })
 }
+
+/**
+ * Elimina por completo a un miembro: borra su cuenta y, en cascada, su perfil y
+ * todos sus datos personales y archivos. Es irreversible y solo lo permite un
+ * líder (lo valida la función `delete_member` en la base de datos).
+ */
+export function useDeleteMember() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.rpc('delete_member', { target: id })
+      if (error) throw error
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['members'] }),
+  })
+}
