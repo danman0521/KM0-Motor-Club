@@ -4,7 +4,7 @@ import { Avatar } from '../../components/Avatar'
 import { Badge, Button, Card, EmptyState, ErrorNote, Modal, SkeletonList } from '../../components/ui'
 import { ApplicationDetails } from '../../features/applications/ApplicationDetails'
 import { useApplicationIds } from '../../features/applications/api'
-import { useMembers, useSetMemberRole, useSetMemberStatus } from '../../features/members/api'
+import { useDeleteMember, useMembers, useSetMemberRole, useSetMemberStatus } from '../../features/members/api'
 import { formatDayOf } from '../../lib/dates'
 import { friendlyError } from '../../lib/errors'
 import type { Profile } from '../../lib/supabase'
@@ -29,10 +29,14 @@ export function LeaderMembersPage() {
   const members = useMembers()
   const setStatus = useSetMemberStatus()
   const setRole = useSetMemberRole()
+  const del = useDeleteMember()
   const [actionError, setActionError] = useState('')
   const applications = useApplicationIds()
   // Miembro cuya ficha se está viendo en el diálogo
   const [viewing, setViewing] = useState<Profile | null>(null)
+  // Miembro que se va a eliminar definitivamente, y el nombre tecleado para confirmar
+  const [deleting, setDeleting] = useState<Profile | null>(null)
+  const [confirmName, setConfirmName] = useState('')
   // Búsqueda y filtro de la lista de miembros aprobados
   const [query, setQuery] = useState('')
   const [onlyNoFicha, setOnlyNoFicha] = useState(false)
@@ -51,6 +55,25 @@ export function LeaderMembersPage() {
       </Button>
     ) : null
 
+  // Botón para eliminar definitivamente; nunca sobre uno mismo
+  const deleteButton = (m: Profile) =>
+    m.id === me?.id ? null : (
+      <Button
+        variant="danger"
+        onClick={() => {
+          setConfirmName('')
+          setDeleting(m)
+        }}
+      >
+        Eliminar
+      </Button>
+    )
+
+  function closeDelete() {
+    setDeleting(null)
+    setConfirmName('')
+  }
+
   async function run(action: () => Promise<unknown>) {
     setActionError('')
     try {
@@ -66,7 +89,7 @@ export function LeaderMembersPage() {
   const pending = members.data.filter((m) => m.status === 'pending')
   const approved = members.data.filter((m) => m.status === 'approved')
   const rejected = members.data.filter((m) => m.status === 'rejected')
-  const busy = setStatus.isPending || setRole.isPending
+  const busy = setStatus.isPending || setRole.isPending || del.isPending
 
   // Lista de miembros aprobados tras aplicar la búsqueda y el filtro de ficha.
   // Se ignoran mayúsculas y tildes para que «julian» encuentre a «Julián».
@@ -107,6 +130,7 @@ export function LeaderMembersPage() {
                     <Button variant="danger" disabled={busy} onClick={() => run(() => setStatus.mutateAsync({ id: m.id, status: 'rejected' }))}>
                       Rechazar
                     </Button>
+                    {deleteButton(m)}
                   </div>
                 </Card>
               </li>
@@ -173,6 +197,7 @@ export function LeaderMembersPage() {
                       </Button>
                     </>
                   )}
+                  {deleteButton(m)}
                   </div>
                 </Card>
               </li>
@@ -188,6 +213,46 @@ export function LeaderMembersPage() {
         </Modal>
       )}
 
+      {deleting && (
+        <Modal title="Eliminar definitivamente" onClose={closeDelete}>
+          <div className="space-y-4">
+            <p className="text-steel">
+              Esta acción <span className="font-semibold text-red-hover">no se puede deshacer</span>. Se eliminará la cuenta de{' '}
+              <span className="font-semibold text-ink">{deleting.full_name}</span> y todos sus datos personales: ficha, motos,
+              asistencias, calificaciones, comentarios y archivos. El contenido del club que haya creado se conserva sin autor.
+            </p>
+            <label className="block space-y-1">
+              <span className="text-sm text-steel">
+                Escribe <span className="font-semibold text-ink">{deleting.full_name}</span> para confirmar.
+              </span>
+              <input
+                type="text"
+                value={confirmName}
+                onChange={(e) => setConfirmName(e.target.value)}
+                autoComplete="off"
+                className="w-full rounded-md border border-line bg-surface-2 px-3 py-2 text-ink placeholder:text-muted focus:border-red focus:outline-none"
+              />
+            </label>
+            <div className="flex flex-wrap justify-end gap-2">
+              <Button variant="ghost" onClick={closeDelete}>
+                Cancelar
+              </Button>
+              <Button
+                variant="danger"
+                disabled={busy || confirmName.trim().toLowerCase() !== deleting.full_name.trim().toLowerCase()}
+                onClick={() => {
+                  const target = deleting.id
+                  closeDelete()
+                  run(() => del.mutateAsync(target))
+                }}
+              >
+                Eliminar definitivamente
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
       {rejected.length > 0 && (
         <section>
           <h2 className="mb-3 text-2xl font-bold">Rechazados o sin acceso</h2>
@@ -196,9 +261,12 @@ export function LeaderMembersPage() {
               <li key={m.id}>
                 <Card className="flex flex-wrap items-center justify-between gap-3">
                   <MemberName member={m} />
-                  <Button variant="ghost" disabled={busy} onClick={() => run(() => setStatus.mutateAsync({ id: m.id, status: 'approved' }))}>
-                    Aprobar
-                  </Button>
+                  <div className="flex flex-wrap gap-2">
+                    <Button variant="ghost" disabled={busy} onClick={() => run(() => setStatus.mutateAsync({ id: m.id, status: 'approved' }))}>
+                      Aprobar
+                    </Button>
+                    {deleteButton(m)}
+                  </div>
                 </Card>
               </li>
             ))}

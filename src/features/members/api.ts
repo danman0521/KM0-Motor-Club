@@ -34,3 +34,37 @@ export function useSetMemberRole() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['members'] }),
   })
 }
+
+/** Borra la carpeta del usuario en un bucket. Best-effort: no interrumpe si falla. */
+async function removeUserFolder(bucket: string, userId: string) {
+  try {
+    const { data } = await supabase.storage.from(bucket).list(userId)
+    if (data?.length) {
+      await supabase.storage.from(bucket).remove(data.map((f) => `${userId}/${f.name}`))
+    }
+  } catch {
+    // La cuenta ya se eliminó; dejar un archivo huérfano no es crítico.
+  }
+}
+
+/**
+ * Elimina por completo a un miembro: borra su cuenta y, en cascada, su perfil y
+ * todos sus datos personales. Es irreversible y solo lo permite un líder (lo
+ * valida la función `delete_member` en la base de datos). Después limpia sus
+ * archivos (avatar, fotos de motos y de la ficha) con la Storage API.
+ */
+export function useDeleteMember() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.rpc('delete_member', { target: id })
+      if (error) throw error
+      await Promise.all([
+        removeUserFolder('avatars', id),
+        removeUserFolder('motorcycles', id),
+        removeUserFolder('applications', id),
+      ])
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['members'] }),
+  })
+}

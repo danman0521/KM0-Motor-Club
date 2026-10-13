@@ -212,3 +212,52 @@ describe('mapa del evento', () => {
     expect(bad.error).not.toBeNull()
   })
 })
+
+describe('eliminar miembro', () => {
+  it('un líder elimina a un miembro y borra en cascada su perfil y datos', async () => {
+    const victim = await createActor('victima', { status: 'approved' })
+    // Datos personales: ficha y moto
+    await admin.from('applications').insert({
+      profile_id: victim.id,
+      city: 'Cali',
+      occupation: 'Diseñadora',
+      birth_date: '1992-03-10',
+      blood_type: 'A+',
+      emergency_contact_name: 'Luis',
+      emergency_contact_phone: '300 111 2222',
+    })
+    const { data: moto } = await admin
+      .from('motorcycles')
+      .insert({ profile_id: victim.id, brand: 'KTM', model: 'Duke 390' })
+      .select('id')
+      .single()
+
+    const del = await leader.client.rpc('delete_member', { target: victim.id })
+    expect(del.error).toBeNull()
+
+    // La cuenta de auth ya no existe
+    const authUser = await admin.auth.admin.getUserById(victim.id)
+    expect(authUser.data.user).toBeNull()
+    // El perfil y sus datos personales se fueron en cascada
+    expect((await admin.from('profiles').select('id').eq('id', victim.id)).data).toEqual([])
+    expect((await admin.from('applications').select('profile_id').eq('profile_id', victim.id)).data).toEqual([])
+    expect((await admin.from('motorcycles').select('id').eq('id', moto!.id)).data).toEqual([])
+  })
+
+  it('un miembro no puede eliminar a otro', async () => {
+    const forbidden = await member.client.rpc('delete_member', { target: other.id })
+    expect(forbidden.error).not.toBeNull()
+    expect((await admin.from('profiles').select('id').eq('id', other.id)).data).toHaveLength(1)
+  })
+
+  it('un líder no puede eliminarse a sí mismo', async () => {
+    const self = await leader.client.rpc('delete_member', { target: leader.id })
+    expect(self.error).not.toBeNull()
+    expect((await admin.from('profiles').select('id').eq('id', leader.id)).data).toHaveLength(1)
+  })
+
+  it('un anónimo no puede eliminar miembros', async () => {
+    const asAnon = await anon.rpc('delete_member', { target: other.id })
+    expect(asAnon.error).not.toBeNull()
+  })
+})
