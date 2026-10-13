@@ -26,6 +26,13 @@ function isValidDate(value: string): boolean {
   return date.getFullYear() === y && date.getMonth() === m - 1 && date.getDate() === d
 }
 
+/** Teléfono válido de forma flexible: solo dígitos, +, espacios, guiones y
+ * paréntesis, con al menos 7 dígitos. */
+function isValidPhone(value: string): boolean {
+  if (!/^[\d\s+().-]+$/.test(value)) return false
+  return value.replace(/\D/g, '').length >= 7
+}
+
 /** Ficha de postulación: datos personales, de contacto y de seguridad. */
 export function ApplicationForm({ initial, hasRiderPhoto = false, hasMotoPhoto = false, submitLabel, onSubmit, onCancel }: Props) {
   const [city, setCity] = useState(initial?.city ?? '')
@@ -60,8 +67,11 @@ export function ApplicationForm({ initial, hasRiderPhoto = false, hasMotoPhoto =
     else if (age < MIN_AGE) next.birth_date = `Revisa la fecha: hay que tener al menos ${MIN_AGE} años.`
     if (inOtherClub && !otherClub.trim()) next.other_club = 'Dinos a cuál grupo perteneces.'
     if (!bloodType) next.blood_type = 'Elige tu tipo de sangre.'
+    if (phone.trim() && !isValidPhone(phone.trim())) next.phone = 'Escribe un número de teléfono válido.'
     if (!contactName.trim()) next.emergency_contact_name = 'Escribe el nombre de tu contacto de emergencia.'
+    else if (contactName.trim().length < 2) next.emergency_contact_name = 'Escribe el nombre completo del contacto.'
     if (!contactPhone.trim()) next.emergency_contact_phone = 'Escribe el teléfono de tu contacto de emergencia.'
+    else if (!isValidPhone(contactPhone.trim())) next.emergency_contact_phone = 'Escribe un número de teléfono válido.'
     if (riderPhoto && !isImageFile(riderPhoto)) next.riderPhoto = 'Solo se pueden subir imágenes.'
     if (motoPhoto && !isImageFile(motoPhoto)) next.motoPhoto = 'Solo se pueden subir imágenes.'
     setErrors(next)
@@ -118,7 +128,7 @@ export function ApplicationForm({ initial, hasRiderPhoto = false, hasMotoPhoto =
           <Field label="Fecha de nacimiento" error={errors.birth_date} hint={age !== null && age >= 0 ? `${age} años` : undefined}>
             {(p) => <input {...p} type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} />}
           </Field>
-          <Field label="Tu celular (opcional)">
+          <Field label="Tu celular (opcional)" error={errors.phone}>
             {(p) => <input {...p} type="tel" maxLength={40} value={phone} onChange={(e) => setPhone(e.target.value)} />}
           </Field>
         </div>

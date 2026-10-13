@@ -66,6 +66,57 @@ describe('ApplicationForm', () => {
     })
   })
 
+  it('rechaza un celular con formato inválido', async () => {
+    const onSubmit = vi.fn()
+    render(<ApplicationForm submitLabel="Enviar postulación" onSubmit={onSubmit} />)
+
+    await fillRequired()
+    await userEvent.type(screen.getByLabelText('Tu celular (opcional)'), 'no-es-tel')
+    await userEvent.click(screen.getByRole('button', { name: 'Enviar postulación' }))
+
+    expect(screen.getByText('Escribe un número de teléfono válido.')).toBeInTheDocument()
+    expect(onSubmit).not.toHaveBeenCalled()
+  })
+
+  it('rechaza un teléfono de contacto de emergencia inválido', async () => {
+    const onSubmit = vi.fn()
+    render(<ApplicationForm submitLabel="Enviar postulación" onSubmit={onSubmit} />)
+
+    await fillRequired()
+    await userEvent.clear(screen.getByLabelText('Teléfono del contacto de emergencia'))
+    await userEvent.type(screen.getByLabelText('Teléfono del contacto de emergencia'), '123')
+    await userEvent.click(screen.getByRole('button', { name: 'Enviar postulación' }))
+
+    expect(screen.getByText('Escribe un número de teléfono válido.')).toBeInTheDocument()
+    expect(onSubmit).not.toHaveBeenCalled()
+  })
+
+  it('rechaza un nombre de contacto demasiado corto', async () => {
+    const onSubmit = vi.fn()
+    render(<ApplicationForm submitLabel="Enviar postulación" onSubmit={onSubmit} />)
+
+    await fillRequired()
+    await userEvent.clear(screen.getByLabelText('Nombre del contacto de emergencia'))
+    await userEvent.type(screen.getByLabelText('Nombre del contacto de emergencia'), 'A')
+    await userEvent.click(screen.getByRole('button', { name: 'Enviar postulación' }))
+
+    expect(screen.getByText('Escribe el nombre completo del contacto.')).toBeInTheDocument()
+    expect(onSubmit).not.toHaveBeenCalled()
+  })
+
+  it('acepta teléfonos con +, espacios y guiones', async () => {
+    const onSubmit = vi.fn().mockResolvedValue(undefined)
+    render(<ApplicationForm submitLabel="Enviar postulación" onSubmit={onSubmit} />)
+
+    await fillRequired()
+    await userEvent.type(screen.getByLabelText('Tu celular (opcional)'), '+57 300-123 4567')
+    await userEvent.click(screen.getByRole('button', { name: 'Enviar postulación' }))
+
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ input: expect.objectContaining({ phone: '+57 300-123 4567' }) }),
+    )
+  })
+
   it('rechaza una fecha de nacimiento de menos de 16 años', async () => {
     const onSubmit = vi.fn()
     render(<ApplicationForm submitLabel="Enviar postulación" onSubmit={onSubmit} />)
