@@ -264,13 +264,13 @@ isOneToOne: false
                   ]
                 },"profiles": {
                   Row: {
-                    "avatar_path": string | null,"created_at": string,"full_name": string,"id": string,"nickname": string | null,"role": Database["public"]['Enums']["member_role"],"status": Database["public"]['Enums']["member_status"]
+                    "avatar_path": string | null,"created_at": string,"full_name": string,"id": string,"nickname": string | null,"ride_role": Database["public"]['Enums']["ride_role"] | null,"role": Database["public"]['Enums']["member_role"],"status": Database["public"]['Enums']["member_status"]
                   }
                   Insert: {
-                    "avatar_path"?: string | null,"created_at"?: string,"full_name": string,"id": string,"nickname"?: string | null,"role"?: Database["public"]['Enums']["member_role"],"status"?: Database["public"]['Enums']["member_status"]
+                    "avatar_path"?: string | null,"created_at"?: string,"full_name": string,"id": string,"nickname"?: string | null,"ride_role"?: Database["public"]['Enums']["ride_role"] | null,"role"?: Database["public"]['Enums']["member_role"],"status"?: Database["public"]['Enums']["member_status"]
                   }
                   Update: {
-                    "avatar_path"?: string | null,"created_at"?: string,"full_name"?: string,"id"?: string,"nickname"?: string | null,"role"?: Database["public"]['Enums']["member_role"],"status"?: Database["public"]['Enums']["member_status"]
+                    "avatar_path"?: string | null,"created_at"?: string,"full_name"?: string,"id"?: string,"nickname"?: string | null,"ride_role"?: Database["public"]['Enums']["ride_role"] | null,"role"?: Database["public"]['Enums']["member_role"],"status"?: Database["public"]['Enums']["member_status"]
                   }
                   Relationships: [
                     
@@ -326,7 +326,7 @@ isOneToOne: false
                            },
 "member_directory":
 { Args: Record<PropertyKey, never>; Returns: {
-              "avatar_path": string,"birth_day": number,"birth_month": number,"city": string,"full_name": string,"nickname": string,"occupation": string,"phone": string,"profile_id": string
+              "avatar_path": string,"birth_day": number,"birth_month": number,"city": string,"full_name": string,"nickname": string,"occupation": string,"phone": string,"profile_id": string,"ride_role": Database["public"]['Enums']["ride_role"]
             }[]
                            },
 "public_current_featured":
@@ -346,7 +346,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "attendance_status": "going"|"not_going","blood_type": "A+"|"A-"|"B+"|"B-"|"AB+"|"AB-"|"O+"|"O-","member_role": "member"|"leader","member_status": "pending"|"approved"|"rejected","suggestion_status": "pending"|"approved"|"rejected"
+            "attendance_status": "going"|"not_going","blood_type": "A+"|"A-"|"B+"|"B-"|"AB+"|"AB-"|"O+"|"O-","member_role": "member"|"leader","member_status": "pending"|"approved"|"rejected","ride_role": "piloto"|"copiloto","suggestion_status": "pending"|"approved"|"rejected"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -466,7 +466,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "attendance_status": ["going", "not_going"],"blood_type": ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],"member_role": ["member", "leader"],"member_status": ["pending", "approved", "rejected"],"suggestion_status": ["pending", "approved", "rejected"]
+            "attendance_status": ["going", "not_going"],"blood_type": ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],"member_role": ["member", "leader"],"member_status": ["pending", "approved", "rejected"],"ride_role": ["piloto", "copiloto"],"suggestion_status": ["pending", "approved", "rejected"]
           }
         }
 } as const

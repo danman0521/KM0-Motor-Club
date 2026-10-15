@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { compressPhoto } from '../../lib/images'
-import { supabase } from '../../lib/supabase'
+import { supabase, type RideRole } from '../../lib/supabase'
 
 const BUCKET = 'avatars'
 
@@ -23,10 +23,18 @@ function useInvalidateProfiles() {
 export function useUpdateProfile(userId: string) {
   const invalidate = useInvalidateProfiles()
   return useMutation({
-    mutationFn: async ({ fullName, nickname }: { fullName: string; nickname: string }) => {
+    mutationFn: async ({
+      fullName,
+      nickname,
+      rideRole,
+    }: {
+      fullName: string
+      nickname: string
+      rideRole: RideRole | null
+    }) => {
       const { error } = await supabase
         .from('profiles')
-        .update({ full_name: fullName, nickname: nickname || null })
+        .update({ full_name: fullName, nickname: nickname || null, ride_role: rideRole })
         .eq('id', userId)
       if (error) throw error
     },

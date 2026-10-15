@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Avatar } from '../components/Avatar'
-import { Card, EmptyState, ErrorNote, PageTitle, SkeletonCards } from '../components/ui'
+import { Badge, Card, EmptyState, ErrorNote, PageTitle, SkeletonCards } from '../components/ui'
 import { useDirectory, whatsappLink, type DirectoryMember } from '../features/directory/api'
 import { formatDayMonth } from '../lib/dates'
+import { rideRoleLabel } from '../lib/supabase'
 
 function displayName(m: DirectoryMember): string {
   return m.nickname || m.full_name
@@ -56,6 +57,11 @@ export function DirectoryPage() {
                       <div className="min-w-0">
                         <p className="text-lg font-bold">{m.full_name}</p>
                         {m.nickname && <p className="text-steel">«{m.nickname}»</p>}
+                        {m.ride_role && (
+                          <span className="mt-1 inline-block">
+                            <Badge tone="silver">{rideRoleLabel(m.ride_role)}</Badge>
+                          </span>
+                        )}
                       </div>
                     </div>
                     <dl className="space-y-1 text-sm">
