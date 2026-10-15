@@ -25,6 +25,7 @@ function ProfileEditor({ profile }: { profile: Profile }) {
   const [nickname, setNickname] = useState(profile.nickname ?? '')
   const [rideRole, setRideRole] = useState<RideRole | ''>(profile.ride_role ?? '')
   const [nameError, setNameError] = useState('')
+  const [rideError, setRideError] = useState('')
   const [formError, setFormError] = useState('')
   const [photoError, setPhotoError] = useState('')
   const [saved, setSaved] = useState(false)
@@ -59,11 +60,16 @@ function ProfileEditor({ profile }: { profile: Profile }) {
     e.preventDefault()
     setFormError('')
     setSaved(false)
+    let invalid = false
     if (!fullName.trim()) {
       setNameError('Escribe tu nombre completo.')
-      return
-    }
-    setNameError('')
+      invalid = true
+    } else setNameError('')
+    if (!rideRole) {
+      setRideError('Elige si vas de piloto o copiloto.')
+      invalid = true
+    } else setRideError('')
+    if (invalid) return
     try {
       await update.mutateAsync({ fullName: fullName.trim(), nickname: nickname.trim(), rideRole: rideRole || null })
       setSaved(true)
@@ -115,10 +121,10 @@ function ProfileEditor({ profile }: { profile: Profile }) {
             <Field label="Apodo (opcional)" hint="Como te conocen en el grupo. Si lo pones, se muestra en lugar de tu nombre.">
               {(p) => <input {...p} maxLength={60} value={nickname} onChange={(e) => setNickname(e.target.value)} />}
             </Field>
-            <Field label="¿Vas de piloto o copiloto? (opcional)" hint="Piloto si conduces, copiloto si vas de acompañante.">
+            <Field label="¿Vas de piloto o copiloto?" error={rideError} hint="Piloto si conduces, copiloto si vas de acompañante.">
               {(p) => (
                 <select {...p} value={rideRole} onChange={(e) => setRideRole(e.target.value as RideRole | '')}>
-                  <option value="">Sin especificar</option>
+                  <option value="">Elige…</option>
                   {RIDE_ROLES.map((r) => (
                     <option key={r} value={r}>
                       {rideRoleLabel(r)}
