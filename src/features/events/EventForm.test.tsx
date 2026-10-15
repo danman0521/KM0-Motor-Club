@@ -69,6 +69,20 @@ describe('EventForm', () => {
     expect(screen.queryByLabelText('Crónica')).not.toBeInTheDocument()
   })
 
+  it('muestra la crónica al elegir una fecha pasada, aunque esté oculta por defecto', async () => {
+    render(<EventForm submitLabel="Crear evento" showChronicle={false} onSubmit={vi.fn()} />)
+    expect(screen.queryByLabelText('Crónica')).not.toBeInTheDocument()
+
+    await userEvent.type(screen.getByLabelText('Fecha y hora'), '2020-05-10T08:00')
+    expect(screen.getByLabelText('Crónica')).toBeInTheDocument()
+  })
+
+  it('mantiene la crónica oculta con una fecha futura', async () => {
+    render(<EventForm submitLabel="Crear evento" showChronicle={false} onSubmit={vi.fn()} />)
+    await userEvent.type(screen.getByLabelText('Fecha y hora'), '2099-05-10T08:00')
+    expect(screen.queryByLabelText('Crónica')).not.toBeInTheDocument()
+  })
+
   it('si falla el guardado muestra el error y conserva lo escrito', async () => {
     const onSubmit = vi.fn().mockRejectedValue({ code: '42501', message: 'permission denied' })
     render(<EventForm submitLabel="Crear evento" onSubmit={onSubmit} />)
