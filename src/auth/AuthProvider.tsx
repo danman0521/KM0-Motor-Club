@@ -13,10 +13,18 @@ type AuthValue = {
   profileError: boolean
   isLeader: boolean
   isApproved: boolean
+  /** true cuando se abrió un enlace de recuperación y toca elegir nueva contraseña */
+  recovering: boolean
   signIn(email: string, password: string): Promise<void>
   /** `needsConfirmation` es true cuando la cuenta debe confirmar el correo antes de entrar */
   signUp(input: SignUpInput): Promise<{ needsConfirmation: boolean }>
   resendConfirmation(email: string): Promise<void>
+  /** Envía el correo con el enlace para restablecer la contraseña */
+  requestPasswordReset(email: string): Promise<void>
+  /** Cambia la contraseña de la sesión de recuperación activa */
+  updatePassword(password: string): Promise<void>
+  /** Sale del modo recuperación para volver al flujo normal */
+  exitRecovery(): void
   signOut(): Promise<void>
   refreshProfile(): Promise<void>
 }
@@ -36,13 +44,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient()
   const [session, setSession] = useState<Session | null>(null)
   const [ready, setReady] = useState(false)
+  const [recovering, setRecovering] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session)
       setReady(true)
     })
-    const { data } = supabase.auth.onAuthStateChange((_event, next) => setSession(next))
+    const { data } = supabase.auth.onAuthStateChange((event, next) => {
+      setSession(next)
+      if (event === 'PASSWORD_RECOVERY') setRecovering(true)
+    })
     return () => data.subscription.unsubscribe()
   }, [])
 
@@ -68,6 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       profileError: profileQuery.isError,
       isApproved,
       isLeader: isApproved && profile?.role === 'leader',
+      recovering,
       async signIn(email, password) {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw error
@@ -86,6 +99,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { error } = await supabase.auth.resend({ type: 'signup', email, options: { emailRedirectTo: appUrl() } })
         if (error) throw error
       },
+      async requestPasswordReset(email) {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: appUrl() })
+        if (error) throw error
+      },
+      async updatePassword(password) {
+        const { error } = await supabase.auth.updateUser({ password })
+        if (error) throw error
+      },
+      exitRecovery() {
+        setRecovering(false)
+      },
       async signOut() {
         await supabase.auth.signOut()
         queryClient.clear()
@@ -94,7 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await profileQuery.refetch()
       },
     }
-  }, [session, ready, userId, profileQuery, queryClient])
+  }, [session, ready, userId, profileQuery, queryClient, recovering])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

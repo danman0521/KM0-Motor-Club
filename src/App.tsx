@@ -1,7 +1,10 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
+import { useAuth } from './auth/AuthProvider'
 import { RequireAccess } from './auth/guards'
 import { PendingGate } from './auth/PendingGate'
 import { Layout } from './components/Layout'
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
+import { ResetPasswordPage } from './pages/ResetPasswordPage'
 import { CalendarPage } from './pages/CalendarPage'
 import { EventDetailPage } from './pages/EventDetailPage'
 import { EventsPage } from './pages/EventsPage'
@@ -27,6 +30,19 @@ import { LeaderPartnersPage } from './pages/leader/LeaderPartnersPage'
 import { LeaderSuggestionsPage } from './pages/leader/LeaderSuggestionsPage'
 
 export default function App() {
+  const { recovering } = useAuth()
+
+  // Tras abrir el enlace de recuperación, la nueva contraseña va por encima de todo
+  if (recovering) {
+    return (
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="*" element={<ResetPasswordPage />} />
+        </Route>
+      </Routes>
+    )
+  }
+
   return (
     <Routes>
       <Route element={<Layout />}>
@@ -35,6 +51,7 @@ export default function App() {
           <Route index element={<HomePage />} />
           <Route path="ingresar" element={<LoginPage />} />
           <Route path="registro" element={<RegisterPage />} />
+          <Route path="recuperar" element={<ForgotPasswordPage />} />
           <Route path="pendiente" element={<PendingPage />} />
 
           <Route element={<RequireAccess need="approved" />}>

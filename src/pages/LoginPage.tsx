@@ -55,6 +55,11 @@ export function LoginPage() {
           <Button type="submit" disabled={busy} className="w-full">
             {busy ? 'Ingresando…' : 'Ingresar'}
           </Button>
+          <p className="text-center text-sm">
+            <Link to="/recuperar" className="text-steel underline hover:text-ink">
+              ¿Olvidaste tu contraseña?
+            </Link>
+          </p>
         </form>
       </Card>
       <p className="mt-4 text-center text-sm text-muted">
