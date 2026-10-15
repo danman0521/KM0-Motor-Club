@@ -25,6 +25,13 @@ export function EventForm({ initial, submitLabel, showChronicle = true, onSubmit
   const [formError, setFormError] = useState('')
   const [busy, setBusy] = useState(false)
 
+  // Un evento con fecha pasada ya ocurrió: aunque la crónica esté oculta al crear,
+  // conviene mostrarla para poder añadir el evento pasado con su historia. El
+  // «ahora» se fija al montar para que el cálculo sea estable en cada render.
+  const [now] = useState(() => Date.now())
+  const startDate = startsAt ? new Date(startsAt) : null
+  const isPastEvent = !!startDate && !Number.isNaN(startDate.getTime()) && startDate.getTime() < now
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     const next: typeof errors = {}
@@ -78,7 +85,7 @@ export function EventForm({ initial, submitLabel, showChronicle = true, onSubmit
       <Field label="Descripción" hint="Ruta, recomendaciones.">
         {(p) => <textarea {...p} rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />}
       </Field>
-      {showChronicle && (
+      {(showChronicle || isPastEvent) && (
         <Field label="Crónica" hint="Cómo estuvo el evento. Se muestra en el historial.">
           {(p) => <textarea {...p} rows={6} value={chronicle} onChange={(e) => setChronicle(e.target.value)} />}
         </Field>
