@@ -7,7 +7,7 @@ import { useApplicationIds } from '../../features/applications/api'
 import { useDeleteMember, useMembers, useSetMemberRole, useSetMemberStatus } from '../../features/members/api'
 import { formatDayOf } from '../../lib/dates'
 import { friendlyError } from '../../lib/errors'
-import type { Profile } from '../../lib/supabase'
+import { rideRoleLabel, type Profile } from '../../lib/supabase'
 
 function MemberName({ member }: { member: Profile }) {
   return (
@@ -46,6 +46,9 @@ export function LeaderMembersPage() {
   // Insignia de color del estado de la ficha
   const fichaBadge = (m: Profile) =>
     hasFicha(m) ? <Badge tone="green">Con ficha</Badge> : <Badge tone="red">Sin ficha</Badge>
+
+  // Insignia de piloto/copiloto, si lo eligió
+  const rideBadge = (m: Profile) => (m.ride_role ? <Badge tone="silver">{rideRoleLabel(m.ride_role)}</Badge> : null)
 
   // Botón para abrir la ficha; solo si existe
   const fichaButton = (m: Profile) =>
@@ -121,6 +124,7 @@ export function LeaderMembersPage() {
                   <div className="flex flex-wrap items-center gap-3">
                     <MemberName member={m} />
                     {fichaBadge(m)}
+                    {rideBadge(m)}
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {fichaButton(m)}
@@ -168,6 +172,7 @@ export function LeaderMembersPage() {
                   <div className="flex flex-wrap items-center gap-3">
                     <MemberName member={m} />
                     {fichaBadge(m)}
+                    {rideBadge(m)}
                     {m.role === 'leader' && <Badge tone="red">Líder</Badge>}
                     {isMe && <Badge>Tú</Badge>}
                   </div>

@@ -6,7 +6,7 @@ import { Badge, Button, Card, ErrorNote, Field, PageTitle } from '../components/
 import { useRemoveAvatar, useUpdateProfile, useUploadAvatar } from '../features/profile/api'
 import { friendlyError } from '../lib/errors'
 import { isImageFile } from '../lib/images'
-import type { Profile } from '../lib/supabase'
+import { RIDE_ROLES, rideRoleLabel, type Profile, type RideRole } from '../lib/supabase'
 
 export function ProfilePage() {
   const { profile } = useAuth()
@@ -23,6 +23,7 @@ function ProfileEditor({ profile }: { profile: Profile }) {
 
   const [fullName, setFullName] = useState(profile.full_name)
   const [nickname, setNickname] = useState(profile.nickname ?? '')
+  const [rideRole, setRideRole] = useState<RideRole | ''>(profile.ride_role ?? '')
   const [nameError, setNameError] = useState('')
   const [formError, setFormError] = useState('')
   const [photoError, setPhotoError] = useState('')
@@ -64,7 +65,7 @@ function ProfileEditor({ profile }: { profile: Profile }) {
     }
     setNameError('')
     try {
-      await update.mutateAsync({ fullName: fullName.trim(), nickname: nickname.trim() })
+      await update.mutateAsync({ fullName: fullName.trim(), nickname: nickname.trim(), rideRole: rideRole || null })
       setSaved(true)
     } catch (err) {
       setFormError(friendlyError(err))
@@ -79,7 +80,10 @@ function ProfileEditor({ profile }: { profile: Profile }) {
       <div className="grid gap-6 md:grid-cols-[18rem_1fr]">
         <Card className="flex flex-col items-center gap-4 text-center">
           <Avatar profile={profile} size="lg" />
-          {profile.role === 'leader' && <Badge tone="red">Líder</Badge>}
+          <div className="flex flex-wrap justify-center gap-2">
+            {profile.role === 'leader' && <Badge tone="red">Líder</Badge>}
+            {profile.ride_role && <Badge tone="silver">{rideRoleLabel(profile.ride_role)}</Badge>}
+          </div>
           <input ref={fileInput} type="file" accept="image/*" hidden onChange={handlePhoto} aria-label="Elegir foto de perfil" />
           <div className="flex flex-wrap justify-center gap-2">
             <Button onClick={() => fileInput.current?.click()} disabled={photoBusy}>
@@ -110,6 +114,18 @@ function ProfileEditor({ profile }: { profile: Profile }) {
             </Field>
             <Field label="Apodo (opcional)" hint="Como te conocen en el grupo. Si lo pones, se muestra en lugar de tu nombre.">
               {(p) => <input {...p} maxLength={60} value={nickname} onChange={(e) => setNickname(e.target.value)} />}
+            </Field>
+            <Field label="¿Vas de piloto o copiloto? (opcional)" hint="Piloto si conduces, copiloto si vas de acompañante.">
+              {(p) => (
+                <select {...p} value={rideRole} onChange={(e) => setRideRole(e.target.value as RideRole | '')}>
+                  <option value="">Sin especificar</option>
+                  {RIDE_ROLES.map((r) => (
+                    <option key={r} value={r}>
+                      {rideRoleLabel(r)}
+                    </option>
+                  ))}
+                </select>
+              )}
             </Field>
             <Button type="submit" disabled={update.isPending}>
               {update.isPending ? 'Guardando…' : 'Guardar cambios'}

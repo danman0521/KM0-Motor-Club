@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { supabase } from '../../lib/supabase'
+import { supabase, type RideRole } from '../../lib/supabase'
 import type { Motorcycle } from '../motorcycles/api'
 
 export type DirectoryMember = {
@@ -12,6 +12,7 @@ export type DirectoryMember = {
   phone: string
   birth_month: number | null
   birth_day: number | null
+  ride_role: RideRole | null
   motorcycles: Motorcycle[]
 }
 
