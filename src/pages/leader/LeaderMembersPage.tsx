@@ -4,7 +4,9 @@ import { Avatar } from '../../components/Avatar'
 import { Badge, Button, Card, EmptyState, ErrorNote, Modal, SkeletonList } from '../../components/ui'
 import { ApplicationDetails } from '../../features/applications/ApplicationDetails'
 import { useApplicationIds } from '../../features/applications/api'
+import { fetchMemberExportRows } from '../../features/members/export'
 import { useDeleteMember, useMembers, useSetMemberRole, useSetMemberStatus } from '../../features/members/api'
+import { toCsv, downloadCsv } from '../../lib/csv'
 import { formatDayOf } from '../../lib/dates'
 import { friendlyError } from '../../lib/errors'
 import { rideRoleLabel, type Profile } from '../../lib/supabase'
@@ -40,6 +42,21 @@ export function LeaderMembersPage() {
   // Búsqueda y filtro de la lista de miembros aprobados
   const [query, setQuery] = useState('')
   const [onlyNoFicha, setOnlyNoFicha] = useState(false)
+  // Exportar a CSV
+  const [exporting, setExporting] = useState(false)
+
+  async function handleExport() {
+    setActionError('')
+    setExporting(true)
+    try {
+      const rows = await fetchMemberExportRows()
+      downloadCsv(`moteros-kmo-${new Date().toLocaleDateString('en-CA')}.csv`, toCsv(rows))
+    } catch (err) {
+      setActionError(friendlyError(err))
+    } finally {
+      setExporting(false)
+    }
+  }
 
   const hasFicha = (m: Profile) => applications.data?.has(m.id) ?? false
 
@@ -111,6 +128,13 @@ export function LeaderMembersPage() {
   return (
     <div className="space-y-10">
       {actionError && <ErrorNote message={actionError} />}
+
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-surface-2 bg-surface px-4 py-3">
+        <p className="text-sm text-steel">Descarga todos los datos de los moteros (pilotos y copilotos) para abrir en Excel.</p>
+        <Button variant="secondary" disabled={exporting} onClick={handleExport}>
+          {exporting ? 'Preparando…' : 'Descargar datos (CSV)'}
+        </Button>
+      </div>
 
       <section>
         <h2 className="mb-3 text-2xl font-bold">Solicitudes pendientes</h2>
