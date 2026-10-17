@@ -15,7 +15,7 @@ export function HomePage() {
       <section className="flex animate-fade-in-up flex-col items-center gap-6 text-center md:flex-row md:text-left">
         <img src={site.logo} alt={`Logo de ${site.name}`} className="logo-hero h-56 w-56 rounded-full md:h-72 md:w-72" />
         <div className="space-y-4">
-          <h1 className="text-6xl font-bold text-red-hover md:text-7xl">{site.name}</h1>
+          <h1 className="title-anton text-6xl tracking-wide text-red-hover md:text-7xl">{site.name}</h1>
           <p className="font-display text-2xl uppercase tracking-wide text-steel">{site.tagline}</p>
           <p className="max-w-xl text-lg">{site.about}</p>
           {(isApproved || session) && (

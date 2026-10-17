@@ -18,6 +18,7 @@
 
   --font-display: 'Oswald Variable', 'Arial Narrow', sans-serif;
   --font-sans: 'Inter Variable', system-ui, sans-serif;
+  --font-anton: 'Anton', 'Arial Narrow', sans-serif;
 }
 
 html {
@@ -38,6 +39,11 @@ h3 {
   font-family: var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.02em;
+}
+
+/* Título central con la fuente tipo logo (Anton) */
+.title-anton {
+  font-family: var(--font-anton);
 }
 
 :focus-visible {
