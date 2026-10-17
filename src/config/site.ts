@@ -2,7 +2,7 @@ export type SocialNetwork = 'instagram' | 'facebook' | 'tiktok' | 'youtube' | 'w
 
 export const site = {
   name: 'KMO Motor Club',
-  tagline: 'La Ruta nos une, la hermandad nos mantiene',
+  tagline: '🏍️ La Ruta nos une, la hermandad nos mantiene 🏍️',
   about:
     'Somos un grupo de moteros unidos por la ruta, la mecánica y el respeto. Rodamos juntos, nos cuidamos en la vía y dejamos huella en cada salida.',
   logo: './logo.webp',
