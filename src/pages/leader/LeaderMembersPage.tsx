@@ -44,6 +44,12 @@ export function LeaderMembersPage() {
   const [onlyNoFicha, setOnlyNoFicha] = useState(false)
   // Exportar a CSV
   const [exporting, setExporting] = useState(false)
+  // Pestaña activa: postulantes en filtro u oficiales
+  const [tab, setTab] = useState<'filtro' | 'oficiales'>('oficiales')
+
+  const tabClass = (active: boolean) =>
+    '-mb-px border-b-2 px-4 py-2 font-display text-sm uppercase tracking-wide transition-colors ' +
+    (active ? 'border-red text-ink' : 'border-transparent text-steel hover:text-ink')
 
   async function handleExport() {
     setActionError('')
@@ -126,7 +132,7 @@ export function LeaderMembersPage() {
   })
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-6">
       {actionError && <ErrorNote message={actionError} />}
 
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-surface-2 bg-surface px-4 py-3">
@@ -136,7 +142,18 @@ export function LeaderMembersPage() {
         </Button>
       </div>
 
-      <section>
+      <div className="flex flex-wrap gap-2 border-b border-surface-2">
+        <button type="button" onClick={() => setTab('filtro')} className={tabClass(tab === 'filtro')}>
+          Postulantes ({pending.length})
+        </button>
+        <button type="button" onClick={() => setTab('oficiales')} className={tabClass(tab === 'oficiales')}>
+          Moteros oficiales ({approved.length})
+        </button>
+      </div>
+
+      {tab === 'filtro' && (
+        <>
+          <section>
         <h2 className="mb-3 text-2xl font-bold">Postulantes (en filtro)</h2>
         {pending.length === 0 ? (
           <EmptyState>No hay postulantes en filtro.</EmptyState>
@@ -167,6 +184,30 @@ export function LeaderMembersPage() {
         )}
       </section>
 
+          {rejected.length > 0 && (
+            <section>
+              <h2 className="mb-3 text-2xl font-bold">Rechazados o sin acceso</h2>
+              <ul className="space-y-3">
+                {rejected.map((m) => (
+                  <li key={m.id}>
+                    <Card className="flex flex-wrap items-center justify-between gap-3">
+                      <MemberName member={m} />
+                      <div className="flex flex-wrap gap-2">
+                        <Button variant="ghost" disabled={busy} onClick={() => run(() => setStatus.mutateAsync({ id: m.id, status: 'approved' }))}>
+                          Pasar a oficial
+                        </Button>
+                        {deleteButton(m)}
+                      </div>
+                    </Card>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </>
+      )}
+
+      {tab === 'oficiales' && (
       <section>
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-2xl font-bold">Moteros oficiales ({approved.length})</h2>
@@ -238,6 +279,7 @@ export function LeaderMembersPage() {
           </ul>
         )}
       </section>
+      )}
 
       {viewing && (
         <Modal title="Ficha de postulación" onClose={() => setViewing(null)} wide>
@@ -285,26 +327,6 @@ export function LeaderMembersPage() {
         </Modal>
       )}
 
-      {rejected.length > 0 && (
-        <section>
-          <h2 className="mb-3 text-2xl font-bold">Rechazados o sin acceso</h2>
-          <ul className="space-y-3">
-            {rejected.map((m) => (
-              <li key={m.id}>
-                <Card className="flex flex-wrap items-center justify-between gap-3">
-                  <MemberName member={m} />
-                  <div className="flex flex-wrap gap-2">
-                    <Button variant="ghost" disabled={busy} onClick={() => run(() => setStatus.mutateAsync({ id: m.id, status: 'approved' }))}>
-                      Aprobar
-                    </Button>
-                    {deleteButton(m)}
-                  </div>
-                </Card>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
     </div>
   )
 }
