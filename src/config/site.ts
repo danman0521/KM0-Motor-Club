@@ -12,7 +12,7 @@ export const site = {
   social: [
     { network: 'instagram', label: 'Instagram', url: 'https://www.instagram.com/' },
     { network: 'facebook', label: 'Facebook', url: 'https://www.facebook.com/' },
-    { network: 'tiktok', label: 'TikTok', url: 'https://www.tiktok.com/' },
+    { network: 'tiktok', label: 'TikTok', url: 'https://www.tiktok.com/@km0motor__club' },
     { network: 'youtube', label: 'YouTube', url: 'https://www.youtube.com/' },
     { network: 'whatsapp', label: 'WhatsApp', url: 'https://wa.me/' },
   ] as { network: SocialNetwork; label: string; url: string }[],
