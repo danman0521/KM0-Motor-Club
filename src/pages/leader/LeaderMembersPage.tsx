@@ -137,9 +137,9 @@ export function LeaderMembersPage() {
       </div>
 
       <section>
-        <h2 className="mb-3 text-2xl font-bold">Solicitudes pendientes</h2>
+        <h2 className="mb-3 text-2xl font-bold">Postulantes (en filtro)</h2>
         {pending.length === 0 ? (
-          <EmptyState>No hay solicitudes por revisar.</EmptyState>
+          <EmptyState>No hay postulantes en filtro.</EmptyState>
         ) : (
           <ul className="space-y-3">
             {pending.map((m) => (
@@ -153,7 +153,7 @@ export function LeaderMembersPage() {
                   <div className="flex flex-wrap gap-2">
                     {fichaButton(m)}
                     <Button disabled={busy} onClick={() => run(() => setStatus.mutateAsync({ id: m.id, status: 'approved' }))}>
-                      Aprobar
+                      Pasar a oficial
                     </Button>
                     <Button variant="danger" disabled={busy} onClick={() => run(() => setStatus.mutateAsync({ id: m.id, status: 'rejected' }))}>
                       Rechazar
@@ -169,7 +169,7 @@ export function LeaderMembersPage() {
 
       <section>
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-2xl font-bold">Miembros ({approved.length})</h2>
+          <h2 className="text-2xl font-bold">Moteros oficiales ({approved.length})</h2>
           <div className="flex flex-wrap items-center gap-3">
             <input
               type="search"
@@ -213,6 +213,9 @@ export function LeaderMembersPage() {
                           Nombrar líder
                         </Button>
                       )}
+                      <Button variant="ghost" disabled={busy} onClick={() => run(() => setStatus.mutateAsync({ id: m.id, status: 'pending' }))}>
+                        Mover a filtro
+                      </Button>
                       <Button
                         variant="danger"
                         disabled={busy}
