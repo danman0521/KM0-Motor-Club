@@ -51,6 +51,13 @@ export function LeaderMembersPage() {
     '-mb-px border-b-2 px-4 py-2 font-display text-sm uppercase tracking-wide transition-colors ' +
     (active ? 'border-red text-ink' : 'border-transparent text-steel hover:text-ink')
 
+  // Subpestaña dentro de "Moteros oficiales"
+  const [officialTab, setOfficialTab] = useState<'todos' | 'lideres' | 'pilotos' | 'copis'>('todos')
+
+  const subTabClass = (active: boolean) =>
+    'rounded-full px-3 py-1 text-sm font-semibold transition-colors ' +
+    (active ? 'bg-red text-ink' : 'bg-surface-2 text-steel hover:text-ink')
+
   async function handleExport() {
     setActionError('')
     setExporting(true)
@@ -125,7 +132,17 @@ export function LeaderMembersPage() {
       .normalize('NFD')
       .replace(/[̀-ͯ]/g, '')
   const term = fold(query.trim())
+  const countLideres = approved.filter((m) => m.role === 'leader').length
+  const countPilotos = approved.filter((m) => m.ride_role === 'piloto').length
+  const countCopis = approved.filter((m) => m.ride_role === 'copiloto').length
+  const matchesOfficialTab = (m: Profile) => {
+    if (officialTab === 'lideres') return m.role === 'leader'
+    if (officialTab === 'pilotos') return m.ride_role === 'piloto'
+    if (officialTab === 'copis') return m.ride_role === 'copiloto'
+    return true
+  }
   const visibleApproved = approved.filter((m) => {
+    if (!matchesOfficialTab(m)) return false
     if (onlyNoFicha && hasFicha(m)) return false
     if (!term) return true
     return fold(`${m.full_name} ${m.nickname ?? ''}`).includes(term)
@@ -225,8 +242,24 @@ export function LeaderMembersPage() {
             </label>
           </div>
         </div>
+
+        <div className="mb-4 flex flex-wrap gap-2">
+          <button type="button" onClick={() => setOfficialTab('todos')} className={subTabClass(officialTab === 'todos')}>
+            Todos ({approved.length})
+          </button>
+          <button type="button" onClick={() => setOfficialTab('lideres')} className={subTabClass(officialTab === 'lideres')}>
+            Líderes ({countLideres})
+          </button>
+          <button type="button" onClick={() => setOfficialTab('pilotos')} className={subTabClass(officialTab === 'pilotos')}>
+            Pilotos ({countPilotos})
+          </button>
+          <button type="button" onClick={() => setOfficialTab('copis')} className={subTabClass(officialTab === 'copis')}>
+            Copis ({countCopis})
+          </button>
+        </div>
+
         {visibleApproved.length === 0 ? (
-          <EmptyState>Ningún motero coincide con la búsqueda.</EmptyState>
+          <EmptyState>{term ? 'Ningún motero coincide con la búsqueda.' : 'No hay moteros en esta vista.'}</EmptyState>
         ) : (
           <ul className="space-y-3">
             {visibleApproved.map((m) => {
