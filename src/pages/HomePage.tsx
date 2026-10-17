@@ -1,5 +1,4 @@
 import { useAuth } from '../auth/AuthProvider'
-import { SocialLinks } from '../components/SocialLinks'
 import { ButtonLink, Card, EmptyState, ErrorNote, SkeletonCards } from '../components/ui'
 import { site } from '../config/site'
 import { PastEventShowcase } from '../features/events/PastEventShowcase'
@@ -19,24 +18,15 @@ export function HomePage() {
           <h1 className="text-6xl font-bold text-red-hover md:text-7xl">{site.name}</h1>
           <p className="font-display text-2xl uppercase tracking-wide text-steel">{site.tagline}</p>
           <p className="max-w-xl text-lg">{site.about}</p>
-          <div className="flex flex-wrap justify-center gap-3 md:justify-start">
-            {isApproved ? (
-              <ButtonLink to="/eventos">Entrar a la zona de miembros</ButtonLink>
-            ) : session ? (
-              <ButtonLink to="/pendiente">Ver el estado de mi solicitud</ButtonLink>
-            ) : (
-              <>
-                <ButtonLink to="/ingresar">Ingresar</ButtonLink>
-                <ButtonLink to="/registro" variant="secondary">
-                  Registrarse
-                </ButtonLink>
-              </>
-            )}
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-3 md:justify-start">
-            <span className="text-sm text-muted">Síguenos:</span>
-            <SocialLinks />
-          </div>
+          {(isApproved || session) && (
+            <div className="flex flex-wrap justify-center gap-3 md:justify-start">
+              {isApproved ? (
+                <ButtonLink to="/eventos">Entrar a la zona de miembros</ButtonLink>
+              ) : (
+                <ButtonLink to="/pendiente">Ver el estado de mi solicitud</ButtonLink>
+              )}
+            </div>
+          )}
         </div>
       </section>
 

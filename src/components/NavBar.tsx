@@ -4,6 +4,8 @@ import { useAuth } from '../auth/AuthProvider'
 import { site } from '../config/site'
 import { displayName } from '../lib/supabase'
 import { Avatar } from './Avatar'
+import { SocialLinks } from './SocialLinks'
+import { ButtonLink } from './ui'
 
 const memberLinks = [
   { to: '/eventos', label: 'Eventos' },
@@ -66,14 +68,15 @@ export function NavBar() {
       </button>
     </>
   ) : (
-    <>
-      <NavLink to="/ingresar" className={linkClass} onClick={() => setOpen(false)}>
+    <div className="flex flex-wrap items-center gap-3">
+      <SocialLinks size="sm" />
+      <ButtonLink to="/ingresar" onClick={() => setOpen(false)}>
         Ingresar
-      </NavLink>
-      <NavLink to="/registro" className={linkClass} onClick={() => setOpen(false)}>
+      </ButtonLink>
+      <ButtonLink to="/registro" variant="secondary" onClick={() => setOpen(false)}>
         Registrarse
-      </NavLink>
-    </>
+      </ButtonLink>
+    </div>
   )
 
   return (
@@ -90,7 +93,7 @@ export function NavBar() {
               {l.label}
             </NavLink>
           ))}
-          <span className="mx-2 h-6 w-px bg-line" />
+          {links.length > 0 && <span className="mx-2 h-6 w-px bg-line" />}
           {account}
         </nav>
 
