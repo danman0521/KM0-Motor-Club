@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { supabase, type Profile } from '../../lib/supabase'
+import { supabase, type Profile, type RideRole } from '../../lib/supabase'
 
 /** Todos los perfiles visibles: un líder ve todos; un miembro solo los aprobados. */
 export function useMembers() {
@@ -32,6 +32,22 @@ export function useSetMemberRole() {
       if (error) throw error
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['members'] }),
+  })
+}
+
+/** Un líder asigna el rol de rodada (piloto/copiloto) de cualquier miembro. */
+export function useSetMemberRideRole() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, rideRole }: { id: string; rideRole: RideRole | null }) => {
+      const { error } = await supabase.from('profiles').update({ ride_role: rideRole }).eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['members'] })
+      queryClient.invalidateQueries({ queryKey: ['directory'] })
+      queryClient.invalidateQueries({ queryKey: ['profile'] })
+    },
   })
 }
 

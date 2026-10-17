@@ -5,11 +5,17 @@ import { Badge, Button, Card, EmptyState, ErrorNote, Modal, SkeletonList } from 
 import { ApplicationDetails } from '../../features/applications/ApplicationDetails'
 import { useApplicationIds } from '../../features/applications/api'
 import { fetchMemberExportRows } from '../../features/members/export'
-import { useDeleteMember, useMembers, useSetMemberRole, useSetMemberStatus } from '../../features/members/api'
+import {
+  useDeleteMember,
+  useMembers,
+  useSetMemberRideRole,
+  useSetMemberRole,
+  useSetMemberStatus,
+} from '../../features/members/api'
 import { toCsv, downloadCsv } from '../../lib/csv'
 import { formatDayOf } from '../../lib/dates'
 import { friendlyError } from '../../lib/errors'
-import { rideRoleLabel, type Profile } from '../../lib/supabase'
+import { RIDE_ROLES, rideRoleLabel, type Profile, type RideRole } from '../../lib/supabase'
 
 function MemberName({ member }: { member: Profile }) {
   return (
@@ -31,6 +37,7 @@ export function LeaderMembersPage() {
   const members = useMembers()
   const setStatus = useSetMemberStatus()
   const setRole = useSetMemberRole()
+  const setRide = useSetMemberRideRole()
   const del = useDeleteMember()
   const [actionError, setActionError] = useState('')
   const applications = useApplicationIds()
@@ -77,8 +84,23 @@ export function LeaderMembersPage() {
   const fichaBadge = (m: Profile) =>
     hasFicha(m) ? <Badge tone="green">Con ficha</Badge> : <Badge tone="red">Sin ficha</Badge>
 
-  // Insignia de piloto/copiloto, si lo eligió
-  const rideBadge = (m: Profile) => (m.ride_role ? <Badge tone="silver">{rideRoleLabel(m.ride_role)}</Badge> : null)
+  // Selector para que un líder asigne piloto/copiloto a cualquier miembro
+  const rideSelect = (m: Profile) => (
+    <select
+      value={m.ride_role ?? ''}
+      disabled={busy}
+      onChange={(e) => run(() => setRide.mutateAsync({ id: m.id, rideRole: (e.target.value || null) as RideRole | null }))}
+      aria-label={`Rol de rodada de ${m.full_name}`}
+      className="rounded-md border border-line bg-surface-2 px-2 py-1 text-xs font-semibold text-steel focus:border-red focus:outline-none"
+    >
+      <option value="">Sin rol</option>
+      {RIDE_ROLES.map((r) => (
+        <option key={r} value={r}>
+          {rideRoleLabel(r)}
+        </option>
+      ))}
+    </select>
+  )
 
   // Botón para abrir la ficha; solo si existe
   const fichaButton = (m: Profile) =>
@@ -122,7 +144,7 @@ export function LeaderMembersPage() {
   const pending = members.data.filter((m) => m.status === 'pending')
   const approved = members.data.filter((m) => m.status === 'approved')
   const rejected = members.data.filter((m) => m.status === 'rejected')
-  const busy = setStatus.isPending || setRole.isPending || del.isPending
+  const busy = setStatus.isPending || setRole.isPending || setRide.isPending || del.isPending
 
   // Lista de miembros aprobados tras aplicar la búsqueda y el filtro de ficha.
   // Se ignoran mayúsculas y tildes para que «julian» encuentre a «Julián».
@@ -182,7 +204,7 @@ export function LeaderMembersPage() {
                   <div className="flex flex-wrap items-center gap-3">
                     <MemberName member={m} />
                     {fichaBadge(m)}
-                    {rideBadge(m)}
+                    {rideSelect(m)}
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {fichaButton(m)}
@@ -270,7 +292,7 @@ export function LeaderMembersPage() {
                   <div className="flex flex-wrap items-center gap-3">
                     <MemberName member={m} />
                     {fichaBadge(m)}
-                    {rideBadge(m)}
+                    {rideSelect(m)}
                     {m.role === 'leader' && <Badge tone="red">Líder</Badge>}
                     {isMe && <Badge>Tú</Badge>}
                   </div>
