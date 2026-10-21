@@ -341,7 +341,7 @@ isOneToOne: false
                            },
 "public_upcoming_events":
 { Args: Record<PropertyKey, never>; Returns: {
-              "location": string,"starts_at": string,"title": string
+              "cover_photo_path": string,"location": string,"starts_at": string,"title": string
             }[]
                            }
           }

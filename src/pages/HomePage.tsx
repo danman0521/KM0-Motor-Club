@@ -1,5 +1,5 @@
 import { useAuth } from '../auth/AuthProvider'
-import { ButtonLink, Card, EmptyState, ErrorNote, SkeletonCards } from '../components/ui'
+import { ButtonLink, EmptyState, ErrorNote, FadeImg, SkeletonCards } from '../components/ui'
 import { site } from '../config/site'
 import { PastEventShowcase } from '../features/events/PastEventShowcase'
 import { FeaturedCard } from '../features/featured/FeaturedCard'
@@ -42,11 +42,20 @@ export function HomePage() {
             ) : (
               <div className="stagger grid gap-4 md:grid-cols-3">
                 {home.data.upcoming.map((e) => (
-                  <Card key={`${e.title}-${e.starts_at}`} className="space-y-1 border-l-4 border-l-red">
-                    <h3 className="text-xl font-bold">{e.title}</h3>
-                    <p className="text-sm text-steel first-letter:uppercase">{formatEventDate(e.starts_at)}</p>
-                    {e.location && <p className="text-sm text-muted">{e.location}</p>}
-                  </Card>
+                  <article key={`${e.title}-${e.starts_at}`} className="overflow-hidden rounded-lg border border-surface-2 bg-surface">
+                    <div className="flex aspect-video items-center justify-center overflow-hidden bg-gunmetal-dark">
+                      {e.coverUrl ? (
+                        <FadeImg src={e.coverUrl} alt={`Portada de ${e.title}`} loading="lazy" className="h-full w-full object-cover" />
+                      ) : (
+                        <img src={site.logo} alt="" className="h-20 w-20 opacity-40" />
+                      )}
+                    </div>
+                    <div className="space-y-1 p-4">
+                      <h3 className="text-xl font-bold">{e.title}</h3>
+                      <p className="text-sm text-steel first-letter:uppercase">{formatEventDate(e.starts_at)}</p>
+                      {e.location && <p className="text-sm text-muted">{e.location}</p>}
+                    </div>
+                  </article>
                 ))}
               </div>
             )}

@@ -87,6 +87,7 @@ export function useSaveFeatured() {
 }
 
 export type PublicPastEvent = { title: string; starts_at: string; location: string; photoUrls: string[] }
+export type PublicUpcomingEvent = { title: string; starts_at: string; location: string; coverUrl?: string }
 
 /** Datos de la portada pública: no requieren sesión. */
 export function usePublicHome() {
@@ -102,8 +103,11 @@ export function usePublicHome() {
       if (featured.error) throw featured.error
       if (past.error) throw past.error
 
-      // Las fotos de la portada están en un bucket privado: se piden URL firmadas
-      const paths = past.data.flatMap((e) => e.photos)
+      // Las fotos (portadas de próximos y fotos de realizados) están en un bucket
+      // privado: se piden URL firmadas para todas de una vez.
+      const coverPaths = upcoming.data.flatMap((e) => (e.cover_photo_path ? [e.cover_photo_path] : []))
+      const photoPaths = past.data.flatMap((e) => e.photos)
+      const paths = [...new Set([...coverPaths, ...photoPaths])]
       const urls: Record<string, string> = {}
       if (paths.length) {
         const signed = await supabase.storage.from('event-photos').createSignedUrls(paths, 60 * 60)
@@ -112,6 +116,12 @@ export function usePublicHome() {
           if (item.path && item.signedUrl) urls[item.path] = item.signedUrl
         }
       }
+      const upcomingEvents: PublicUpcomingEvent[] = upcoming.data.map((e) => ({
+        title: e.title,
+        starts_at: e.starts_at,
+        location: e.location,
+        coverUrl: e.cover_photo_path ? urls[e.cover_photo_path] : undefined,
+      }))
       const pastEvents: PublicPastEvent[] = past.data.map((e) => ({
         title: e.title,
         starts_at: e.starts_at,
@@ -119,7 +129,7 @@ export function usePublicHome() {
         photoUrls: e.photos.flatMap((p) => (urls[p] ? [urls[p]] : [])),
       }))
 
-      return { upcoming: upcoming.data, featured: featured.data[0] ?? null, past: pastEvents }
+      return { upcoming: upcomingEvents, featured: featured.data[0] ?? null, past: pastEvents }
     },
   })
 }
